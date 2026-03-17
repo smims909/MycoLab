@@ -1,19 +1,34 @@
-# MycoLab
+# MycoLab v43.81
 
-MycoLab est une application web minimaliste et technique conçue pour le calcul de substrats en mycologie. Elle permet de gérer des recettes précises pour l'inoculation, la fructification et le casing, avec un export PDF optimisé.
+Application web minimaliste et technique pour le calcul de substrats en mycologie. Optimisée pour une utilisation en laboratoire et sur mobile (PWA).
+
+## 🚀 Accès à l'application
+
+L'application est directement utilisable via le lien suivant :
+👉 **[Lancer MycoLab](https://smims909.github.io/MycoLab/)**
+
+---
+
+## 📲 Installation sur Mobile
+Pour une expérience optimale (plein écran, icône sur l'accueil, accès rapide) :
+
+### Sur iOS (Safari)
+1. Ouvrez le lien dans Safari.
+2. Appuyez sur l'icône **Partager** (le carré avec une flèche vers le haut).
+3. Sélectionnez **Sur l'écran d'accueil**.
+
+### Sur Android (Chrome)
+1. Ouvrez le lien dans Chrome.
+2. Appuyez sur les **trois points** en haut à droite.
+3. Sélectionnez **Installer l'application** ou **Ajouter à l'écran d'accueil**.
+
+---
 
 ## Fonctionnalités
-- **Calcul Dynamique :** Ajustement des ratios selon le volume total (L).
-- **Unités Multiples :** Gestion du volume (L, dl, ml) et des composants solides (cuillères à soupe/café converties en grammes lors de l'export).
-- **Mode Sombre/Clair :** Interface adaptée aux conditions de laboratoire.
-- **Bilingue :** Français / Anglais.
-- **PWA :** Installable sur mobile pour un usage hors-ligne.
-- **Export PDF :** Mise en page propre avec signature de l'auteur et horodatage.
-
-## Installation
-1. Clonez le dépôt.
-2. Ouvrez `index.html` dans n'importe quel navigateur moderne.
-3. Pour l'installation mobile, ajoutez l'URL à votre écran d'accueil (ou utilisez le manifest fourni).
+- **Calcul Dynamique :** Ajustement des ratios selon le volume (L).
+- **Multi-unités :** Conversion automatique (L, dl, ml, g).
+- **Design Technique :** Mode sombre et mise en page optimisée pour l'impression PDF.
+- **Local First :** Sauvegarde automatique de vos recettes dans le navigateur.
 
 ## Futur du projet
 - Intégration d'un calendrier de culture.
