@@ -1,4 +1,4 @@
-# MycoLab v43.8
+# MycoLab
 
 MycoLab est une application web minimaliste et technique conçue pour le calcul de substrats en mycologie. Elle permet de gérer des recettes précises pour l'inoculation, la fructification et le casing, avec un export PDF optimisé.
 
