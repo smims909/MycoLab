@@ -57,7 +57,25 @@ td{padding:15px 0;border-bottom:1px solid var(--grey)}
 #drawer.open{bottom:0}
 .lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:20px}
 .lib-btn{padding:10px;border:1px solid var(--main);font-size:9px;font-weight:800;text-align:center;text-transform:uppercase;cursor:pointer;color:var(--main)}
-@media print{body.dark-mode{--bg:#fff;--main:#000;--sub:#999;--grey:#eee}@page{size:A4;margin:1cm}.container{max-width:100%}.note-area{background:#fff!important;color:#000!important;border:none!important;border-left:1px solid #ccc!important;padding-left:10px}.author-box{display:block!important;margin:-20px 0 30px 0!important;padding:0!important;text-align:right!important;width:100%}#author-name{color:#000!important;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px}.vol-bar,.btn-add-ing,#drawer,#modal-overlay,.tab:not(.active),.v-chip:not(.active),button,.header-btns,.lang-toggle{display:none!important}}
+
+/* OPTIMISATION PDF / PRINT */
+@media print{
+  body.dark-mode{--bg:#fff;--main:#000;--sub:#777;--grey:#ddd}
+  @page{size:A4;margin:0.5cm}
+  body{padding:0;font-size:12px}
+  .container{max-width:100%;width:100%}
+  header{margin-bottom:5px;padding-bottom:5px}
+  h1{font-size:20px}
+  #timestamp{margin-bottom:15px;font-size:9px}
+  .section-block{margin-bottom:15px;page-break-inside:avoid}
+  .section-title{font-size:14px;margin-bottom:10px;padding-bottom:3px}
+  td{padding:8px 0;font-size:13px}
+  .col-v{font-size:14px}
+  .note-area{background:#fff!important;color:#000!important;border:none!important;border-left:1px solid #ccc!important;padding:5px 10px;min-height:30px;margin-bottom:20px;font-size:11px}
+  .author-box{display:block!important;margin-top:10px;padding:0!important;text-align:right}
+  #author-name{color:#000!important;font-size:9px;font-weight:700;text-transform:uppercase}
+  .vol-bar, .btn-add-ing, #drawer, #modal-overlay, .tab:not(.active), .v-chip:not(.active), button, .header-btns, .lang-toggle{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -93,7 +111,6 @@ ${r.i.map((a,r)=>`<tr><td class="col-n" onclick="APP.prompt('Nom:','${a.n}',e=>A
 
 window.onload=()=>APP.init();
 
-// SERVICE WORKER REGISTRATION
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(() => {
     console.log('SW Registered');
