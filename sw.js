@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mycolab-v1';
+const CACHE_NAME = 'mycolab-v1.1'; // Change ici pour forcer la mise à jour
 const ASSETS = [
   'index.html',
   'manifest.json',
@@ -10,16 +10,15 @@ const ASSETS = [
   'android-chrome-512x512.png'
 ];
 
-// Installation : Mise en cache des fichiers essentiels
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
 });
 
-// Activation : Nettoyage des anciens caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -30,7 +29,6 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Stratégie : Réseau d'abord, sinon Cache
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request).catch(() => {
