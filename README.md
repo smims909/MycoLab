@@ -1,35 +1,36 @@
-# MycoLab v43.81
+# MycoLab
 
-Application web minimaliste et technique pour le calcul de substrats en mycologie. Optimisée pour une utilisation en laboratoire et sur mobile (PWA).
-
-## 🚀 Accès à l'application
-
-L'application est directement utilisable via le lien suivant :
-👉 **[Lancer MycoLab](https://smims909.github.io/MycoLab/)**
+Calculateur de substrats mycologiques haute précision. Une application conçue pour la simplicité, l'efficacité en laboratoire et la gestion intelligente des volumes.
 
 ---
 
-## 📲 Installation sur Mobile
-Pour une expérience optimale (plein écran, icône sur l'accueil, accès rapide) :
+## 🚀 Accès Direct & Installation
+Lien officiel de l'application :
+**https://smims909.github.io/MycoLab/**
 
-### Sur iOS (Safari)
-1. Ouvrez le lien dans Safari.
-2. Appuyez sur l'icône **Partager** (le carré avec une flèche vers le haut).
-3. Sélectionnez **Sur l'écran d'accueil**.
-
-### Sur Android (Chrome)
-1. Ouvrez le lien dans Chrome.
-2. Appuyez sur les **trois points** en haut à droite.
-3. Sélectionnez **Installer l'application** ou **Ajouter à l'écran d'accueil**.
+> **Note :** MycoLab est une Progressive Web App (PWA). Vous pouvez l'installer sur votre téléphone (via "Ajouter à l'écran d'accueil") pour l'utiliser comme une application native, même sans connexion internet.
 
 ---
 
-## Fonctionnalités
-- **Calcul Dynamique :** Ajustement des ratios selon le volume (L).
-- **Multi-unités :** Conversion automatique (L, dl, ml, g).
-- **Design Technique :** Mode sombre et mise en page optimisée pour l'impression PDF.
-- **Local First :** Sauvegarde automatique de vos recettes dans le navigateur.
+## 🛠️ Philosophie du Projet
+MycoLab repose sur trois piliers :
+1. **Simplicité radicale :** Pas de menus inutiles. L'interface est directe pour une utilisation rapide avec des gants ou en laboratoire.
+2. **Précision technique :** Gestion des ratios en pourcentage et conversion automatique des unités (L, dl, ml, g) selon le volume cible.
+3. **Confidentialité totale :** Vos recettes et données restent stockées localement sur votre appareil. Rien n'est envoyé sur un serveur externe.
 
-## Futur du projet
-- Intégration d'un calendrier de culture.
-- Suivi de lots (Batch Tracking) avec génération de codes.
+## ✨ Fonctionnalités Clés
+- **Calcul Dynamique :** Changez le volume (ex: de 0.5L à 15L) et tous les ingrédients s'ajustent instantanément.
+- **Bibliothèque d'ingrédients :** Base de données intégrée des composants classiques (Coco, Vermiculite, Gypse, etc.).
+- **Équilibrage automatique :** Fonction pour ajuster automatiquement un ratio à 100%.
+- **Export PDF Pro :** Mise en page épurée pour l'impression de vos fiches de culture avec horodatage et signature.
+- **Mode Sombre :** Optimisé pour les environnements à faible luminosité.
+
+## ⚖️ Licence
+Ce projet est sous licence **MIT**. Vous êtes libre de l'utiliser, de le modifier et de le distribuer.
+
+---
+
+## 📅 Road Map
+- [ ] Suivi de lots (Batch Tracking) avec codes uniques.
+- [ ] Calendrier de suivi de colonisation et fructification.
+- [ ] Système d'import/export de recettes pour sauvegarde externe.
