@@ -23,14 +23,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--main);margin:0;pad
 
 /* Header */
 header{width:100%;margin-bottom:5px;padding-bottom:0}
-.header-row{display:flex;justify-content:space-between;align-items:baseline;width:100%} /* alignement par la ligne de base */
-/* Barre sous la première ligne */
+.header-row{display:flex;justify-content:space-between;align-items:baseline;width:100%}
 .header-row:first-child{border-bottom:2px solid var(--main);padding-bottom:10px;margin-bottom:5px}
 h1{font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:4px;margin:0}
-.right-group{display:flex;align-items:baseline;gap:8px} /* même alignement dans le groupe */
+.right-group{display:flex;align-items:baseline;gap:8px}
 .lang-toggle{font-size:10px;font-weight:800;cursor:pointer;color:var(--sub);text-transform:uppercase}
 .lang-toggle span.active{color:var(--main);text-decoration:underline}
-#timestamp{font-size:10px;color:var(--sub);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
+#timestamp{font-size:10px;color:var(--sub);text-transform:uppercase;font-weight:700;letter-spacing:.5px;cursor:pointer}
 .text-btn{font-size:10px;font-weight:800;cursor:pointer;color:var(--main);text-transform:uppercase;background:none;border:none;padding:0}
 .text-btn:hover{opacity:0.7}
 
@@ -54,7 +53,11 @@ td{padding:15px 0;border-bottom:1px solid var(--grey)}
 .btn-add-ing{font-size:9px;font-weight:800;border:none;padding:0;text-transform:uppercase;cursor:pointer;background:none;color:var(--main)}
 .total-label{font-size:11px;font-weight:800;text-transform:uppercase;text-align:right}
 .note-area{width:100%;border:none;border-left:1px solid var(--grey);padding:8px 12px;font-family:var(--font);font-size:12px;color:var(--main);resize:none;margin-bottom:40px;background:var(--nav-bg);min-height:40px}
-.author-box{display:none;padding:20px;cursor:pointer}
+
+/* Auteur en bas à droite */
+.author-box{display:block;margin-top:30px;text-align:right;font-size:9px;font-weight:700;text-transform:uppercase;color:var(--sub);cursor:pointer}
+#author-name{color:var(--main)}
+
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .modal{background:var(--bg);color:var(--main);border:1px solid var(--main);width:90%;max-width:320px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .modal-input{width:100%;border:none;background:transparent;color:var(--main);border-bottom:2px solid var(--main);font-size:20px;padding:10px 0;margin-bottom:20px;border-radius:0}
@@ -80,8 +83,8 @@ td{padding:15px 0;border-bottom:1px solid var(--grey)}
   td{padding:8px 0;font-size:13px}
   .col-v{font-size:14px}
   .note-area{background:#fff!important;color:#000!important;border:none!important;border-left:1px solid #ccc!important;padding:5px 10px;min-height:30px;margin-bottom:20px;font-size:11px}
-  .author-box{display:block!important;margin-top:10px;padding:0!important;text-align:right}
-  #author-name{color:#000!important;font-size:9px;font-weight:700;text-transform:uppercase}
+  .author-box{display:block!important;margin-top:10px;text-align:right;color:#000!important}
+  #author-name{color:#000!important}
   .vol-bar, .btn-add-ing, #drawer, #modal-overlay, .tab:not(.active), .v-chip:not(.active), .text-btn, .lang-toggle, .right-group{display:none!important}
 }
 </style>
@@ -100,16 +103,19 @@ td{padding:15px 0;border-bottom:1px solid var(--grey)}
         </div>
       </div>
     </div>
-    <!-- Deuxième ligne : date + sauvegarde -->
+    <!-- Deuxième ligne : date (cliquable) + sauvegarde -->
     <div class="header-row bottom">
-      <div id="timestamp">...</div>
+      <div id="timestamp" onclick="APP.pickDate()">...</div>
       <span class="text-btn" onclick="APP.openSaveModal()">Sauvegarde</span>
     </div>
   </header>
 
   <div id="content"></div>
 
-  <footer class="author-box" onclick="APP.prompt('Auteur:',APP.state.author||'',v=>APP.setAuthor(v))"><span id="author-name">...</span></footer>
+  <!-- Auteur en bas à droite -->
+  <footer class="author-box" onclick="APP.prompt('Auteur:',APP.state.author||'',v=>APP.setAuthor(v))">
+    <span id="author-name">...</span>
+  </footer>
 </div>
 
 <div id="drawer">
@@ -121,27 +127,269 @@ td{padding:15px 0;border-bottom:1px solid var(--grey)}
 </div>
 
 <script>
-const LANGS={fr:{titles:["I. Inoculations","II. Fructification","III. Casing"],total:"TOTAL",addIng:"+ COMPOSANT",notes:"Notes techniques...",cancel:"ANNULER",del:"SUPPRIMER",rename:"RENOMMER",equi:"EQUILIBRER",manual:"MANUEL",other:"+ AUTRE",dark:"SOMBRE",light:"CLAIR",authorDef:"AUTEUR NON DÉFINI",lib:["Fibre de Coco","Vermiculite","Gypse","Blanc de Meudon","Chaux","Paille hachée","Épeautre","Carton","Marc de Café","Sciure de bois","Copeaux","Chanvre","Tourbe","Perlite","Seigle","Millet","Blé","Sorgho","Agar-Agar","Extrait de Malt","Composte","Fumier"],pdf:"PDF",save:"SAUVEGARDER",restore:"RESTAURER"},en:{titles:["I. Inoculation","II. Fruiting","III. Casing"],total:"TOTAL",addIng:"+ INGREDIENT",notes:"Technical notes...",cancel:"CANCEL",del:"DELETE",rename:"RENAME",equi:"BALANCE",manual:"MANUAL",other:"+ OTHER",dark:"DARK",light:"LIGHT",authorDef:"AUTHOR NOT SET",lib:["Coco Coir","Vermiculite","Gypsum","Chalk","Lime","Chopped Straw","Spelt","Cardboard","Coffee Grounds","Sawdust","Wood Chips","Hemp","Peat","Perlite","Rye","Millet","Wheat","Sorghum","Agar-Agar","Malt Extract","Compost","Manure"],pdf:"PDF",save:"BACKUP",restore:"RESTORE"}},APP={data:[],state:{gIdx:[0,0,0],pressTimer:null,lang:"fr",dark:!1,author:""},init(){const e=localStorage.getItem("mycolab_lang");e&&(this.state.lang=e);const t=localStorage.getItem("mycolab_dark");"true"===t&&(this.state.dark=!0,document.body.classList.add("dark-mode"));const n=localStorage.getItem("mycolab_author");n&&(this.state.author=n);const a=localStorage.getItem("mycolab_v43_0");if(a)try{this.data=JSON.parse(a)}catch(e){this.loadDefaults()}else this.loadDefaults();this.render()},loadDefaults(){const e="fr"===this.state.lang;this.data=[{id:1,t:e?"I. Inoculations":"I. Inoculation",v:.5,cv:[.5,1,2,5],note:"",g:[{n:e?"Bocal Carton":"Cardboard Jar",i:[{n:e?"Carton":"Cardboard",r:450,u:"vol"},{n:e?"Vermiculite":"Vermiculite",r:400,u:"vol"},{n:e?"Épeautre":"Spelt",r:100,u:"vol"},{n:e?"Blanc de Meudon":"Chalk",r:50,u:"cs"}]}]},{id:2,t:e?"II. Fructification":"II. Fruiting",v:7,cv:[5,7,12,15],note:"",g:[{n:"Bulk 7L",i:[{n:e?"Fibre de Coco":"Coco Coir",r:600,u:"vol"},{n:e?"Vermiculite":"Vermiculite",r:200,u:"vol"},{n:e?"Paille hachée":"Chopped Straw",r:100,u:"vol"},{n:e?"Gypse":"Gypsum",r:100,u:"cs"}]}]},{id:3,t:e?"III. Casing":"III. Casing",v:1.2,cv:[.5,1,1.2,2],note:"",g:[{n:"Casing pH+",i:[{n:e?"Vermiculite":"Vermiculite",r:670,u:"vol"},{n:e?"Fibre de Coco":"Coco Coir",r:280,u:"vol"},{n:e?"Blanc de Meudon":"Chalk",r:40,u:"cs"},{n:e?"Chaux":"Lime",r:10,u:"cc"}]}]}]},setAuthor(e){this.state.author=e,localStorage.setItem("mycolab_author",e),this.render()},toggleDarkMode(){this.state.dark=!this.state.dark,document.body.classList.toggle("dark-mode",this.state.dark),localStorage.setItem("mycolab_dark",this.state.dark),this.render()},toggleLang(){this.state.lang="fr"===this.state.lang?"en":"fr",localStorage.setItem("mycolab_lang",this.state.lang),this.render()},save(){localStorage.setItem("mycolab_v43_0",JSON.stringify(this.data)),this.updateTime()},updateTime(){const e=new Date,t=document.getElementById("timestamp");t&&(t.innerText=e.toLocaleDateString("fr"===this.state.lang?"fr-CH":"en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}))},openSaveModal(){const e=LANGS[this.state.lang],t=document.getElementById("modal-box");t.innerHTML=`<div class="modal-btn black" onclick="APP.downloadBackup()">${e.save}</div><div class="modal-btn" onclick="APP.uploadBackup()">${e.restore}</div><div class="modal-btn" onclick="window.print()">${e.pdf}</div><div class="modal-btn" onclick="APP.closeM()">${e.cancel}</div>`,document.getElementById("modal-overlay").style.display="flex"},downloadBackup(){const e=JSON.stringify(this.data,null,2),t=new Blob([e],{type:"application/json"}),n=URL.createObjectURL(t),a=document.createElement("a");a.href=n,a.download=`mycolab_backup_${new Date().toISOString().slice(0,10)}.json`,a.click(),URL.revokeObjectURL(n),this.closeM()},uploadBackup(){const e=document.createElement("input");e.type="file",e.accept=".json,application/json",e.onchange=t=>{const n=t.target.files[0];if(!n)return;const a=new FileReader();a.onload=async t=>{try{const n=JSON.parse(t.target.result);this.data=n,this.save(),this.render(),this.closeM()}catch(e){alert("Fichier invalide")}},a.readAsText(n)},e.click()},render(){const e=LANGS[this.state.lang];document.getElementById("l-fr").className="fr"===this.state.lang?"active":"";document.getElementById("l-en").className="en"===this.state.lang?"active":"";document.getElementById("dark-toggle").innerText=this.state.dark?e.light:e.dark;document.getElementById("author-name").innerText=this.state.author||e.authorDef;const t=document.getElementById("content");t.innerHTML=this.data.map((t,n)=>{const a=this.state.gIdx[n],r=t.g[a],o=r.i.reduce((e,t)=>e+t.r,0)/10;return`
-<div class="section-block">
-<div class="section-title" onclick="APP.prompt('Edit:','${t.t}',v=>{APP.data[${n}].t=v;APP.render()})">${t.t}</div>
-<nav class="vol-bar">
-${t.cv.sort((e,t)=>e-t).map(a=>`<div class="v-chip ${t.v==a?"active":""}" onmousedown="APP.startP(event,'vol',[${n},${a}])" ontouchstart="APP.startP(event,'vol',[${n},${a}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setV(${n},${a})">${a}L</div>`).join("")}
-<div onclick="APP.prompt('Vol:','',v=>APP.addV(${n},v))" style="cursor:pointer;font-weight:800;font-size:18px">+</div>
-</nav>
-<div class="tabs-row">
-${t.g.map((e,t)=>`<div class="tab ${a==t?"active":""}" onmousedown="APP.startP(event,'tab',[${n},${t}])" ontouchstart="APP.startP(event,'tab',[${n},${t}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setT(${n},${t})">${e.n}</div>`).join("")}
-<div class="tab" onclick="APP.prompt('Name:','',e=>APP.addT(${n},e))" style="color:var(--main);font-size:14px">+</div>
-</div>
-<table>
-${r.i.map((a,r)=>`<tr><td class="col-n" onclick="APP.prompt('Nom:','${a.n}',e=>APP.editN(${n},${r},e))" onmousedown="APP.startP(event,'ing',[${n},${r}])" ontouchstart="APP.startP(event,'ing',[${n},${r}])" onmouseup="APP.endP()" ontouchend="APP.endP()">${a.n}</td><td class="col-p" onclick="APP.openRatio(${n},${r})">${a.r/10}%</td>${this.calc(a,t.v)}</tr>`).join("")}
-</table>
-<div class="section-footer"><button class="btn-add-ing" onclick="APP.state.activeCat=${n};APP.toggleDrawer(!0)">${e.addIng}</button><div class="total-label" style="color:${Math.abs(o-100)<.1?"#999":"var(--danger)"}">${e.total} : ${o.toFixed(1)}%</div></div>
-<textarea class="note-area" placeholder="${e.notes}" oninput="APP.data[${n}].note=this.value;APP.save()">${t.note||""}</textarea>
-</div>`}).join(""),this.save(),this.renderLib()},calc(e,t){if("cs"===e.u||"cc"===e.u){const n="cs"===e.u?150:50,a=e.r*t*10/n,r=Math.round(2*a)/2;return`<td class="col-v">${r>=5?r*("cs"===e.u?15:5)+'<span class="unit-s">g</span>':r+'<span class="unit-s">'+e.u+"</span>"}</td>`}const n=e.r*t/1e3;return`<td class="col-v">${n<.1?Math.round(1e3*n)+'<span class="unit-s">ml</span>':n<1?(10*n).toFixed(1)+'<span class="unit-s">dl</span>':n.toFixed(2)+'<span class="unit-s">L</span>'}</td>`},setV(e,t){this.data[e].v=t,this.render()},addV(e,t){t&&!isNaN(t)&&(this.data[e].cv.push(parseFloat(t)),this.data[e].v=parseFloat(t),this.render())},delV(e,t){this.data[e].cv=this.data[e].cv.filter(e=>e!==t),this.data[e].v==t&&(this.data[e].v=this.data[e].cv[0]||.5),this.render()},setT(e,t){this.state.gIdx[e]=t,this.render()},addT(e,t){t&&(this.data[e].g.push({n:t,i:[]}),this.state.gIdx[e]=this.data[e].g.length-1,this.render())},delT(e,t){this.data[e].g.length>1&&(this.data[e].g.splice(t,1),this.state.gIdx[e]=0,this.render())},editN(e,t,n){n&&(this.data[e].g[this.state.gIdx[e]].i[t].n=n,this.render())},delI(e,t){this.data[e].g[this.state.gIdx[e]].i.splice(t,1),this.render()},addIng(e){if(!e)return;const t=e.toLowerCase().match(/meudon|gypse|chaux|chalk|lime|gypsum|malt|agar/)?"cs":"vol";this.data[this.state.activeCat].g[this.state.gIdx[this.state.activeCat]].i.push({n:e,r:0,u:t}),this.toggleDrawer(!1),this.render()},startP(e,t,n){this.endP(),this.state.pressTimer=setTimeout(()=>{if("tab"===t)this.openTabMenu(n[0],n[1]);else this.confirmDel(t,n)},450)},endP(){this.state.pressTimer&&clearTimeout(this.state.pressTimer)},openTabMenu(e,t){const n=LANGS[this.state.lang],a=document.getElementById("modal-box");a.innerHTML=`<div style="font-weight:900;font-size:11px;margin-bottom:15px;text-transform:uppercase">${this.data[e].g[t].n}</div><div class="modal-btn black" id="m-rename">${n.rename}</div><div class="modal-btn danger" id="m-del">${n.del}</div><div class="modal-btn" onclick="APP.closeM()">${n.cancel}</div>`,document.getElementById("modal-overlay").style.display="flex",document.getElementById("m-rename").onclick=()=>{this.closeM(),this.prompt(n.rename+":",this.data[e].g[t].n,n=>{n&&(this.data[e].g[t].n=n,this.render())})},document.getElementById("m-del").onclick=()=>{this.delT(e,t),this.closeM()}},confirmDel(e,t){const n=LANGS[this.state.lang],a=document.getElementById("modal-box");a.innerHTML=`<div style="height:15px"></div><div class="modal-btn black" onclick="APP.closeM()">${n.cancel}</div><div class="modal-btn danger" id="del-btn">${n.del}</div>`,document.getElementById("modal-overlay").style.display="flex",document.getElementById("del-btn").onclick=()=>{"vol"==e&&this.delV(t[0],t[1]),"ing"==e&&this.delI(t[0],t[1]),this.closeM()}},openRatio(e,t){const n=LANGS[this.state.lang],a=this.data[e].g[this.state.gIdx[e]],r=a.i.reduce((n,a,r)=>n+(r!==t?a.r:0),0)/10,o=Math.max(0,100-r),i=document.getElementById("modal-box");i.innerHTML=`<div class="modal-btn black" onclick="APP.setR(${e},${t},${o})">${n.equi} (${o.toFixed(1)}%)</div><div class="modal-btn" onclick="APP.prompt('% :',${a.i[t].r/10},n=>APP.setR(${e},${t},n))">${n.manual}</div><div class="modal-btn" onclick="APP.closeM()">${n.cancel}</div>`,document.getElementById("modal-overlay").style.display="flex"},setR(e,t,n){null!==n&&!isNaN(n)&&(this.data[e].g[this.state.gIdx[e]].i[t].r=10*parseFloat(n),this.render()),this.closeM()},prompt(e,t,n){const a=LANGS[this.state.lang],r=document.getElementById("modal-box");r.innerHTML=`<div style="font-size:10px;font-weight:900;margin-bottom:10px">${e}</div><input type="text" id="p-in" class="modal-input" value="${t}"><div class="modal-btn black" id="p-ok">OK</div><div class="modal-btn" onclick="APP.closeM()">${a.cancel}</div>`,document.getElementById("modal-overlay").style.display="flex";const o=document.getElementById("p-in");o.focus(),o.select(),document.getElementById("p-ok").onclick=()=>{(n(o.value),this.closeM())}},closeM(){document.getElementById("modal-overlay").style.display="none"},toggleDrawer(e){document.getElementById("drawer").classList.toggle("open",e)},renderLib(){const e=LANGS[this.state.lang],t=document.getElementById("lib-list");t.innerHTML=e.lib.sort().map(e=>`<div class="lib-btn" onclick="APP.addIng('${e}')">${e}</div>`).join("")+`<div class="lib-btn" style="background:var(--main);color:var(--bg)" onclick="APP.prompt('Item:','',e=>APP.addIng(e))">${e.other}</div>`}};
+const LANGS={fr:{titles:["I. Inoculations","II. Fructification","III. Casing"],total:"TOTAL",addIng:"+ COMPOSANT",notes:"Notes techniques...",cancel:"ANNULER",del:"SUPPRIMER",rename:"RENOMMER",equi:"EQUILIBRER",manual:"MANUEL",other:"+ AUTRE",dark:"SOMBRE",light:"CLAIR",authorDef:"AUTEUR NON DÉFINI",lib:["Fibre de Coco","Vermiculite","Gypse","Blanc de Meudon","Chaux","Paille hachée","Épeautre","Carton","Marc de Café","Sciure de bois","Copeaux","Chanvre","Tourbe","Perlite","Seigle","Millet","Blé","Sorgho","Agar-Agar","Extrait de Malt","Composte","Fumier"],pdf:"PDF",save:"SAUVEGARDER",restore:"RESTAURER",setDate:"Choisir une date",today:"Aujourd'hui"},en:{titles:["I. Inoculation","II. Fruiting","III. Casing"],total:"TOTAL",addIng:"+ INGREDIENT",notes:"Technical notes...",cancel:"CANCEL",del:"DELETE",rename:"RENAME",equi:"BALANCE",manual:"MANUAL",other:"+ OTHER",dark:"DARK",light:"LIGHT",authorDef:"AUTHOR NOT SET",lib:["Coco Coir","Vermiculite","Gypsum","Chalk","Lime","Chopped Straw","Spelt","Cardboard","Coffee Grounds","Sawdust","Wood Chips","Hemp","Peat","Perlite","Rye","Millet","Wheat","Sorghum","Agar-Agar","Malt Extract","Compost","Manure"],pdf:"PDF",save:"BACKUP",restore:"RESTORE",setDate:"Pick a date",today:"Today"}};
 
-window.onload=()=>APP.init();
+APP = {
+  data: [],
+  state: {
+    gIdx: [0,0,0],
+    pressTimer: null,
+    lang: "fr",
+    dark: false,
+    author: "",
+    customDate: null
+  },
+  init() {
+    const e = localStorage.getItem("mycolab_lang");
+    if (e) this.state.lang = e;
+    const t = localStorage.getItem("mycolab_dark");
+    if ("true" === t) { this.state.dark = true; document.body.classList.add("dark-mode"); }
+    const n = localStorage.getItem("mycolab_author");
+    if (n) this.state.author = n;
+    const d = localStorage.getItem("mycolab_customDate");
+    if (d) this.state.customDate = parseInt(d, 10);
 
-// Service Worker : on ignore l'erreur en local (protocole file:)
+    const a = localStorage.getItem("mycolab_v43_0");
+    if (a) try { this.data = JSON.parse(a); } catch(e) { this.loadDefaults(); }
+    else this.loadDefaults();
+
+    this.render();
+  },
+  loadDefaults() {
+    const e = "fr" === this.state.lang;
+    this.data = [
+      {id:1,t:e?"I. Inoculations":"I. Inoculation",v:.5,cv:[.5,1,2,5],note:"",g:[{n:e?"Bocal Carton":"Cardboard Jar",i:[{n:e?"Carton":"Cardboard",r:450,u:"vol"},{n:e?"Vermiculite":"Vermiculite",r:400,u:"vol"},{n:e?"Épeautre":"Spelt",r:100,u:"vol"},{n:e?"Blanc de Meudon":"Chalk",r:50,u:"cs"}]}]},
+      {id:2,t:e?"II. Fructification":"II. Fruiting",v:7,cv:[5,7,12,15],note:"",g:[{n:"Bulk 7L",i:[{n:e?"Fibre de Coco":"Coco Coir",r:600,u:"vol"},{n:e?"Vermiculite":"Vermiculite",r:200,u:"vol"},{n:e?"Paille hachée":"Chopped Straw",r:100,u:"vol"},{n:e?"Gypse":"Gypsum",r:100,u:"cs"}]}]},
+      {id:3,t:e?"III. Casing":"III. Casing",v:1.2,cv:[.5,1,1.2,2],note:"",g:[{n:"Casing pH+",i:[{n:e?"Vermiculite":"Vermiculite",r:670,u:"vol"},{n:e?"Fibre de Coco":"Coco Coir",r:280,u:"vol"},{n:e?"Blanc de Meudon":"Chalk",r:40,u:"cs"},{n:e?"Chaux":"Lime",r:10,u:"cc"}]}]}
+    ];
+  },
+  setAuthor(e) {
+    this.state.author = e;
+    localStorage.setItem("mycolab_author", e);
+    this.render();
+  },
+  toggleDarkMode() {
+    this.state.dark = !this.state.dark;
+    document.body.classList.toggle("dark-mode", this.state.dark);
+    localStorage.setItem("mycolab_dark", this.state.dark);
+    this.render();
+  },
+  toggleLang() {
+    this.state.lang = "fr" === this.state.lang ? "en" : "fr";
+    localStorage.setItem("mycolab_lang", this.state.lang);
+    this.render();
+  },
+  save() {
+    localStorage.setItem("mycolab_v43_0", JSON.stringify(this.data));
+    this.updateTime();
+  },
+  pickDate() {
+    const L = LANGS[this.state.lang];
+    const currentDate = this.state.customDate ? new Date(this.state.customDate) : new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const defaultValue = `${year}-${month}-${day}`;
+
+    const modal = document.getElementById('modal-box');
+    modal.innerHTML = `
+      <div style="font-size:12px; font-weight:900; margin-bottom:15px">${L.setDate}</div>
+      <input type="date" id="modal-date" class="modal-input" value="${defaultValue}">
+      <div class="modal-btn black" onclick="APP.setCustomDate()">OK</div>
+      <div class="modal-btn" onclick="APP.resetCustomDate()">${L.today}</div>
+      <div class="modal-btn" onclick="APP.closeM()">${L.cancel}</div>
+    `;
+    document.getElementById('modal-overlay').style.display = 'flex';
+  },
+  setCustomDate() {
+    const dateStr = document.getElementById('modal-date')?.value;
+    if (dateStr) {
+      const date = new Date(dateStr + 'T12:00:00');
+      this.state.customDate = date.getTime();
+      localStorage.setItem("mycolab_customDate", this.state.customDate);
+      this.updateTime();
+    }
+    this.closeM();
+  },
+  resetCustomDate() {
+    this.state.customDate = null;
+    localStorage.removeItem("mycolab_customDate");
+    this.updateTime();
+    this.closeM();
+  },
+  updateTime() {
+    const d = this.state.customDate ? new Date(this.state.customDate) : new Date();
+    const el = document.getElementById('timestamp');
+    if (el) {
+      el.innerText = d.toLocaleDateString(
+        this.state.lang === 'fr' ? 'fr-CH' : 'en-GB',
+        { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }
+      );
+    }
+  },
+  openSaveModal() {
+    const e = LANGS[this.state.lang];
+    const t = document.getElementById("modal-box");
+    t.innerHTML = `<div class="modal-btn black" onclick="APP.downloadBackup()">${e.save}</div><div class="modal-btn" onclick="APP.uploadBackup()">${e.restore}</div><div class="modal-btn" onclick="window.print()">${e.pdf}</div><div class="modal-btn" onclick="APP.closeM()">${e.cancel}</div>`;
+    document.getElementById("modal-overlay").style.display = "flex";
+  },
+  downloadBackup() {
+    const e = JSON.stringify(this.data, null, 2);
+    const t = new Blob([e], {type:"application/json"});
+    const n = URL.createObjectURL(t);
+    const a = document.createElement("a");
+    a.href = n;
+    a.download = `mycolab_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(n);
+    this.closeM();
+  },
+  uploadBackup() {
+    const e = document.createElement("input");
+    e.type = "file";
+    e.accept = ".json,application/json";
+    e.onchange = t => {
+      const n = t.target.files[0];
+      if (!n) return;
+      const a = new FileReader();
+      a.onload = async t => {
+        try {
+          const n = JSON.parse(t.target.result);
+          this.data = n;
+          this.save();
+          this.render();
+          this.closeM();
+        } catch(e) { alert("Fichier invalide"); }
+      };
+      a.readAsText(n);
+    };
+    e.click();
+  },
+  render() {
+    const e = LANGS[this.state.lang];
+    document.getElementById("l-fr").className = "fr" === this.state.lang ? "active" : "";
+    document.getElementById("l-en").className = "en" === this.state.lang ? "active" : "";
+    document.getElementById("dark-toggle").innerText = this.state.dark ? e.light : e.dark;
+    document.getElementById("author-name").innerText = this.state.author || e.authorDef;
+    this.updateTime();
+
+    const t = document.getElementById("content");
+    t.innerHTML = this.data.map((t, n) => {
+      const a = this.state.gIdx[n];
+      const r = t.g[a];
+      const o = r.i.reduce((e, t) => e + t.r, 0) / 10;
+      return `
+        <div class="section-block">
+          <div class="section-title" onclick="APP.prompt('Edit:','${t.t}',v=>{APP.data[${n}].t=v;APP.render()})">${t.t}</div>
+          <nav class="vol-bar">
+            ${t.cv.sort((e,t)=>e-t).map(a => `<div class="v-chip ${t.v==a?"active":""}" onmousedown="APP.startP(event,'vol',[${n},${a}])" ontouchstart="APP.startP(event,'vol',[${n},${a}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setV(${n},${a})">${a}L</div>`).join("")}
+            <div onclick="APP.prompt('Vol:','',v=>APP.addV(${n},v))" style="cursor:pointer;font-weight:800;font-size:18px">+</div>
+          </nav>
+          <div class="tabs-row">
+            ${t.g.map((e, t) => `<div class="tab ${a==t?"active":""}" onmousedown="APP.startP(event,'tab',[${n},${t}])" ontouchstart="APP.startP(event,'tab',[${n},${t}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setT(${n},${t})">${e.n}</div>`).join("")}
+            <div class="tab" onclick="APP.prompt('Name:','',e=>APP.addT(${n},e))" style="color:var(--main);font-size:14px">+</div>
+          </div>
+          <table>
+            ${r.i.map((a, r) => `<tr><td class="col-n" onclick="APP.prompt('Nom:','${a.n}',e=>APP.editN(${n},${r},e))" onmousedown="APP.startP(event,'ing',[${n},${r}])" ontouchstart="APP.startP(event,'ing',[${n},${r}])" onmouseup="APP.endP()" ontouchend="APP.endP()">${a.n}</td><td class="col-p" onclick="APP.openRatio(${n},${r})">${a.r/10}%</td>${this.calc(a, t.v)}</tr>`).join("")}
+          </table>
+          <div class="section-footer"><button class="btn-add-ing" onclick="APP.state.activeCat=${n};APP.toggleDrawer(!0)">${e.addIng}</button><div class="total-label" style="color:${Math.abs(o-100)<.1?"#999":"var(--danger)"}">${e.total} : ${o.toFixed(1)}%</div></div>
+          <textarea class="note-area" placeholder="${e.notes}" oninput="APP.data[${n}].note=this.value;APP.save()">${t.note||""}</textarea>
+        </div>
+      `;
+    }).join("");
+    this.save();
+    this.renderLib();
+  },
+  calc(e, t) {
+    if ("cs" === e.u || "cc" === e.u) {
+      const n = "cs" === e.u ? 150 : 50;
+      const a = e.r * t * 10 / n;
+      const r = Math.round(2 * a) / 2;
+      return `<td class="col-v">${r >= 5 ? r * ("cs" === e.u ? 15 : 5) + '<span class="unit-s">g</span>' : r + '<span class="unit-s">' + e.u + '</span>'}</td>`;
+    }
+    const n = e.r * t / 1000;
+    if (n < 0.1) return `<td class="col-v">${Math.round(1000 * n)}<span class="unit-s">ml</span></td>`;
+    if (n < 1) return `<td class="col-v">${(10 * n).toFixed(1)}<span class="unit-s">dl</span></td>`;
+    return `<td class="col-v">${n.toFixed(2)}<span class="unit-s">L</span></td>`;
+  },
+  setV(e, t) { this.data[e].v = t; this.render(); },
+  addV(e, t) { if (t && !isNaN(t)) { this.data[e].cv.push(parseFloat(t)); this.data[e].v = parseFloat(t); this.render(); } },
+  delV(e, t) { this.data[e].cv = this.data[e].cv.filter(e => e !== t); if (this.data[e].v == t) this.data[e].v = this.data[e].cv[0] || .5; this.render(); },
+  setT(e, t) { this.state.gIdx[e] = t; this.render(); },
+  addT(e, t) { if (t) { this.data[e].g.push({n:t,i:[]}); this.state.gIdx[e] = this.data[e].g.length - 1; this.render(); } },
+  delT(e, t) { if (this.data[e].g.length > 1) { this.data[e].g.splice(t, 1); this.state.gIdx[e] = 0; this.render(); } },
+  editN(e, t, n) { if (n) { this.data[e].g[this.state.gIdx[e]].i[t].n = n; this.render(); } },
+  delI(e, t) { this.data[e].g[this.state.gIdx[e]].i.splice(t, 1); this.render(); },
+  addIng(e) {
+    if (!e) return;
+    const t = e.toLowerCase().match(/meudon|gypse|chaux|chalk|lime|gypsum|malt|agar/) ? "cs" : "vol";
+    this.data[this.state.activeCat].g[this.state.gIdx[this.state.activeCat]].i.push({n:e, r:0, u:t});
+    this.toggleDrawer(!1);
+    this.render();
+  },
+  startP(e, t, n) {
+    this.endP();
+    this.state.pressTimer = setTimeout(() => {
+      if ("tab" === t) this.openTabMenu(n[0], n[1]);
+      else this.confirmDel(t, n);
+    }, 450);
+  },
+  endP() { if (this.state.pressTimer) clearTimeout(this.state.pressTimer); },
+  openTabMenu(e, t) {
+    const n = LANGS[this.state.lang];
+    const a = document.getElementById("modal-box");
+    a.innerHTML = `<div style="font-weight:900;font-size:11px;margin-bottom:15px;text-transform:uppercase">${this.data[e].g[t].n}</div><div class="modal-btn black" id="m-rename">${n.rename}</div><div class="modal-btn danger" id="m-del">${n.del}</div><div class="modal-btn" onclick="APP.closeM()">${n.cancel}</div>`;
+    document.getElementById("modal-overlay").style.display = "flex";
+    document.getElementById("m-rename").onclick = () => {
+      this.closeM();
+      this.prompt(n.rename + ":", this.data[e].g[t].n, n => { if (n) { this.data[e].g[t].n = n; this.render(); } });
+    };
+    document.getElementById("m-del").onclick = () => { this.delT(e, t); this.closeM(); };
+  },
+  confirmDel(e, t) {
+    const n = LANGS[this.state.lang];
+    const a = document.getElementById("modal-box");
+    a.innerHTML = `<div style="height:15px"></div><div class="modal-btn black" onclick="APP.closeM()">${n.cancel}</div><div class="modal-btn danger" id="del-btn">${n.del}</div>`;
+    document.getElementById("modal-overlay").style.display = "flex";
+    document.getElementById("del-btn").onclick = () => {
+      if ("vol" == e) this.delV(t[0], t[1]);
+      if ("ing" == e) this.delI(t[0], t[1]);
+      this.closeM();
+    };
+  },
+  openRatio(e, t) {
+    const n = LANGS[this.state.lang];
+    const a = this.data[e].g[this.state.gIdx[e]];
+    const r = a.i.reduce((n, a, r) => n + (r !== t ? a.r : 0), 0) / 10;
+    const o = Math.max(0, 100 - r);
+    const i = document.getElementById("modal-box");
+    i.innerHTML = `<div class="modal-btn black" onclick="APP.setR(${e},${t},${o})">${n.equi} (${o.toFixed(1)}%)</div><div class="modal-btn" onclick="APP.prompt('% :',${a.i[t].r/10},n=>APP.setR(${e},${t},n))">${n.manual}</div><div class="modal-btn" onclick="APP.closeM()">${n.cancel}</div>`;
+    document.getElementById("modal-overlay").style.display = "flex";
+  },
+  setR(e, t, n) {
+    if (null !== n && !isNaN(n)) { this.data[e].g[this.state.gIdx[e]].i[t].r = 10 * parseFloat(n); this.render(); }
+    this.closeM();
+  },
+  prompt(e, t, n) {
+    const a = LANGS[this.state.lang];
+    const r = document.getElementById("modal-box");
+    r.innerHTML = `<div style="font-size:10px;font-weight:900;margin-bottom:10px">${e}</div><input type="text" id="p-in" class="modal-input" value="${t}"><div class="modal-btn black" id="p-ok">OK</div><div class="modal-btn" onclick="APP.closeM()">${a.cancel}</div>`;
+    document.getElementById("modal-overlay").style.display = "flex";
+    const o = document.getElementById("p-in");
+    o.focus(); o.select();
+    document.getElementById("p-ok").onclick = () => { n(o.value); this.closeM(); };
+  },
+  closeM() { document.getElementById("modal-overlay").style.display = "none"; },
+  toggleDrawer(e) { document.getElementById("drawer").classList.toggle("open", e); },
+  renderLib() {
+    const e = LANGS[this.state.lang];
+    const t = document.getElementById("lib-list");
+    t.innerHTML = e.lib.sort().map(e => `<div class="lib-btn" onclick="APP.addIng('${e}')">${e}</div>`).join("") + `<div class="lib-btn" style="background:var(--main);color:var(--bg)" onclick="APP.prompt('Item:','',e=>APP.addIng(e))">${e.other}</div>`;
+  }
+};
+
+window.onload = () => APP.init();
+
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   navigator.serviceWorker.register('sw.js').catch(e => console.log('SW non enregistré (normal en local)'));
 }
