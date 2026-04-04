@@ -6,7 +6,7 @@ MycoLab est un outil de laboratoire minimaliste conçu pour les chercheurs et ex
 ---
 
 ## ⚡ Accès Direct
-L'application est "Zero-Install" et fonctionne directement dans votre navigateur.
+L'application est sans installation et fonctionne directement dans votre navigateur.
 
 > **Lien officiel :** https://smims909.github.io/MycoLab/
 
