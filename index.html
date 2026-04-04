@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<!--
+  ╔══════════════════════════════════════╗
+  ║  PROJECT  : MycoLab                 ║
+  ║  VERSION  : 5.4.0 (Robust Dynamic) ║
+  ║  AUTHOR   : smims909                ║
+  ╠══════════════════════════════════════╣
+  ║  . * .  -%@@@@@@@@@@@@@%#-.  * .    ║
+  ║  .%@@@@@@@@@@@@@@@@@@@@@@@%.        ║
+  ║  #@@%####@@@@@@@@@@@@@@@@@#         ║
+  ║  %@@%    %@@@@@@@@@@@@@@@@%  * .    ║
+  ║  %@@@@@@@@@@@@@@@@@@@@@@@@%         ║
+  ║   -*#%@@@@@@@@@@@@@@@@@%#*-         ║
+  ║       @@@@@  @@@@@@@    . * .       ║
+  ║      .@@@@@  @@@@@@.                ║
+  ║      %@@@@@@@@@@@@@%                ║
+  ║       -*%@@@@@@@%*-    . * .  *     ║
+  ╚══════════════════════════════════════╝
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ffffff">
+<title>MycoLab</title>
+
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<style>
+/* ============================================================
+   MycoLab — Styles
+   Structure : Variables > Base > Header > Nav > Content >
+               Cards > Timeline > Modal > Print
+   ============================================================ */
+:root{--bg:#fff;--main:#000;--sub:#666;--grey:#eee;--danger:#ff4d4d;--font:'Inter',-apple-system,sans-serif;--nav-bg:#fff}
+body.dark-mode{--bg:#000;--main:#fff;--sub:#aaa;--grey:#222;--nav-bg:#111}
+body.dark-mode .modal-input{background:rgba(255,255,255,.08)!important;color:#fff!important}
+body.dark-mode .note-area{background:rgba(255,255,255,.06)!important;color:#fff!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+body{font-family:var(--font);background:var(--bg);color:var(--main);margin:0;padding:calc(20px + env(safe-area-inset-top)) 20px 20px 20px;font-weight:300;-webkit-user-select:none;transition:background .2s;overflow-x:hidden}
+.container{max-width:450px;margin:auto;display:flex;flex-direction:column;min-height:95vh}
+
+/* Header */
+header{width:100%;margin-bottom:5px;padding-bottom:0}
+.header-row{display:flex;justify-content:space-between;align-items:baseline;width:100%}
+.header-row:first-child{border-bottom:2px solid var(--main);padding-bottom:10px;margin-bottom:5px}
+h1{font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:4px;margin:0}
+.right-group{display:flex;align-items:baseline;gap:8px}
+.lang-toggle{font-size:10px;font-weight:800;cursor:pointer;color:var(--sub);text-transform:uppercase}
+.lang-toggle span.active{color:var(--main);text-decoration:underline}
+#timestamp{font-size:10px;color:var(--sub);text-transform:uppercase;font-weight:700;letter-spacing:.5px;cursor:pointer}
+.text-btn{font-size:10px;font-weight:800;cursor:pointer;color:var(--main);text-transform:uppercase;background:none;border:none;padding:0}
+.text-btn:hover{opacity:0.7}
+
+/* Navigation onglets */
+.tabs-nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;padding-bottom:5px;border-bottom:1px solid var(--grey);overflow-x:auto;scrollbar-width:none}
+.tabs-nav::-webkit-scrollbar{display:none}
+.tab-view{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;cursor:pointer;white-space:nowrap;padding:4px 0;flex:1;text-align:center}
+.tab-view.active{color:var(--main);border-bottom:2px solid var(--main)}
+
+#content{margin-top:15px}
+.section-block{page-break-inside:avoid;margin-bottom:10px}
+.section-title{font-size:18px;font-weight:900;text-transform:uppercase;border-bottom:2px solid var(--main);margin-bottom:20px;padding-bottom:5px;letter-spacing:1px;cursor:pointer}
+.vol-bar{display:flex;gap:18px;margin-bottom:25px;flex-wrap:wrap;align-items:center}
+.v-chip{font-size:13px;color:var(--sub);cursor:pointer}
+.v-chip.active{color:var(--main);font-weight:900}
+.tabs-row{display:flex;gap:18px;margin-bottom:20px;border-bottom:1px solid var(--grey);overflow-x:auto;padding-bottom:10px;align-items:flex-end;scrollbar-width:none}
+.tabs-row::-webkit-scrollbar{display:none}
+.tab{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;white-space:nowrap;cursor:pointer}
+.tab.active{color:var(--main);font-size:14px;font-weight:900;border-bottom:2px solid var(--main);padding-bottom:2px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:5px}
+td{padding:15px 0;border-bottom:1px solid var(--grey)}
+.col-n{width:45%;text-align:left;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.col-p{width:20%;text-align:center;font-size:11px;font-weight:800;color:var(--sub);cursor:pointer}
+.col-v{width:35%;text-align:right;font-size:17px;font-weight:500}
+.unit-s{font-size:11px;font-weight:700;color:var(--sub);margin-left:2px;text-transform:lowercase}
+.section-footer{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px 0}
+.btn-add-ing{font-size:9px;font-weight:800;border:none;padding:0;text-transform:uppercase;cursor:pointer;background:none;color:var(--main)}
+.total-label{font-size:11px;font-weight:800;text-transform:uppercase;text-align:right}
+.note-area{width:100%;border:none;border-left:1px solid var(--grey);padding:8px 12px;font-family:var(--font);font-size:12px;color:var(--main);resize:none;margin-bottom:40px;background:var(--nav-bg);min-height:40px}
+
+/* Listes et cartes */
+.ingredients-list, .cultures-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.ingredient-item, .culture-card{border:1px solid var(--grey);padding:12px;position:relative}
+.ingredient-item{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px}
+.ing-name{font-weight:900;font-size:14px;width:100%}
+.ing-details{font-size:10px;color:var(--sub);font-family:monospace;background:var(--grey);padding:2px 6px;border-radius:2px}
+.culture-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;cursor:pointer}
+.culture-name{font-weight:900;font-size:14px}
+.culture-id{font-size:9px;color:var(--sub);font-family:monospace}
+.culture-dates{font-size:10px;color:var(--sub);margin:2px 0}
+.culture-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.btn-small{font-size:9px;font-weight:800;border:1px solid var(--main);padding:4px 8px;background:none;color:var(--main);cursor:pointer;text-transform:uppercase}
+.btn-delete{background:none;border:none;color:var(--danger);font-size:16px;cursor:pointer;padding:0 5px}
+.btn-add{font-size:10px;font-weight:800;border:1px solid var(--main);background:none;color:var(--main);padding:8px;width:100%;text-transform:uppercase;cursor:pointer;margin-top:10px}
+
+/* Timeline */
+/* ── Gantt Calendar Grid ─────────────────────────────────── */
+.gantt-outer{display:flex;overflow:hidden;margin-bottom:20px;border:1px solid var(--grey);border-radius:4px;background:var(--bg)}
+.gantt-names-col{flex-shrink:0;width:100px;border-right:2px solid var(--main);display:flex;flex-direction:column;z-index:2;background:var(--bg)}
+.gantt-names-header{height:52px;border-bottom:2px solid var(--main);padding:0 8px;display:flex;align-items:center;font-size:8px;font-weight:800;text-transform:uppercase;color:var(--sub);flex-shrink:0}
+.gantt-name-cell{height:40px;padding:0 8px;display:flex;align-items:center;border-bottom:1px solid var(--grey);cursor:pointer;flex-shrink:0}
+.gantt-name-cell:hover{background:var(--grey)}
+.gantt-name-text{font-size:9px;font-weight:800;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;line-height:1.2}
+.gantt-name-ir{font-size:8px;font-weight:900;color:var(--danger);flex-shrink:0;margin-left:4px}
+.gantt-scroll{overflow-x:auto;flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--grey) transparent}
+.gantt-scroll::-webkit-scrollbar{height:3px}
+.gantt-scroll::-webkit-scrollbar-thumb{background:var(--grey);border-radius:2px}
+.gantt-grid{display:flex;flex-direction:column}
+.gantt-months-row{display:flex;border-bottom:1px solid var(--grey);min-height:22px;background:var(--bg)}
+.gantt-month-cell{flex-shrink:0;padding:3px 6px;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--main);border-right:1px solid var(--grey);white-space:nowrap;overflow:hidden}
+.gantt-days-row{display:flex;border-bottom:2px solid var(--main);min-height:30px;background:var(--bg);box-shadow:0 3px 8px -2px rgba(0,0,0,.12)}
+.gantt-day-cell{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--grey);cursor:pointer;transition:background .1s}
+.gantt-day-cell:hover{background:var(--grey)}
+.gantt-day-cell.today{background:color-mix(in srgb,var(--danger) 12%,transparent);border-right-color:var(--danger)}
+.gantt-day-cell.weekend{opacity:.45}
+.gantt-day-name{font-size:6px;font-weight:800;text-transform:uppercase;color:var(--sub)}
+.gantt-day-num{font-size:10px;font-weight:900;color:var(--main);line-height:1}
+.gantt-day-cell.today .gantt-day-num{color:var(--danger)}
+.gantt-body-rows{display:flex;flex-direction:column}
+.gantt-body-row{position:relative;height:40px;border-bottom:1px solid var(--grey);display:flex}
+.gantt-body-row:nth-child(even){background:color-mix(in srgb,var(--grey) 40%,transparent)}
+.gantt-col-cell{flex-shrink:0;height:100%;border-right:1px solid transparent}
+.gantt-col-cell.week-start{border-right-color:var(--grey)}
+.gantt-col-cell.today-col{border-right:2px solid var(--danger)}
+.gantt-bars-layer{position:absolute;inset:0;pointer-events:none}
+.gantt-bar{position:absolute;height:12px;top:14px;border-radius:2px;background:var(--main);cursor:pointer;pointer-events:all;transition:opacity .15s}
+.gantt-bar:hover{opacity:.7}
+.gantt-bar.ev-incubation{background:#e0e0e0}
+.gantt-bar.ev-observation{background:#d1d1d1}
+.gantt-bar.ev-colonisation,.gantt-bar.ev-pinning{background:#666}
+.gantt-bar.ev-recolte{background:#2ecc71}
+.gantt-bar.ev-contamination,.gantt-bar.ev-echec{background:var(--danger)}
+.gantt-bar.ev-note{background:#bbb}
+.gantt-marker{width:8px;height:8px;border-radius:50%;position:absolute;top:50%;transform:translate(-50%,-50%);cursor:pointer;z-index:5;border:none;padding:0;pointer-events:all;appearance:none;-webkit-appearance:none;transition:transform .12s,opacity .12s}
+.gantt-marker:hover{transform:translate(-50%,-50%) scale(1.3);opacity:1}
+.gantt-marker.inoculation,.gantt-marker.incubation{background:#fff;border:1px solid #ccc!important;box-shadow:0 0 0 .5px #ccc}
+.gantt-marker.observation{background:#d1d1d1}
+.gantt-marker.colonisation,.gantt-marker.pinning{background:#666}
+.gantt-marker.recolte{background:#2ecc71}
+.gantt-marker.contamination,.gantt-marker.echec{background:var(--danger)}
+.gantt-marker.note{background:#d1d1d1}
+.gantt-today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--danger);opacity:.7;pointer-events:none;z-index:4;transform:translateX(-50%)}
+.gantt-tooltip{position:fixed;pointer-events:none;background:var(--main);color:var(--bg);font-size:9px;font-weight:700;padding:4px 8px;border-radius:2px;white-space:nowrap;z-index:9999;opacity:0;transition:opacity .1s}
+.gantt-tooltip.visible{opacity:1}
+.culture-code{display:inline-block;padding:4px 8px;background:var(--grey);border-radius:2px;font-size:10px;cursor:pointer;margin:2px}
+.culture-code:hover{background:var(--sub);color:var(--bg)}
+
+/* Modales */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal{background:var(--bg);color:var(--main);border:1px solid var(--main);width:90%;max-width:320px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.modal-input{width:100%;border:none;background:transparent;color:var(--main);border-bottom:2px solid var(--main);font-size:20px;padding:10px 0;margin-bottom:20px;border-radius:0}
+.modal-input.small{font-size:16px;margin-bottom:10px}
+.modal-label{font-size:9px;color:var(--sub);margin-bottom:2px;text-transform:uppercase;font-weight:700}
+.modal-row{display:flex;gap:10px;margin-bottom:15px}
+.modal-row .modal-input{flex:1}
+.modal-btn{padding:15px;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;cursor:pointer;border:1px solid var(--main);width:100%;margin-bottom:10px;display:block;color:var(--main);background:transparent}
+.modal-btn.black{background:var(--main);color:var(--bg)}
+.modal-btn.danger{border-color:var(--danger);color:var(--danger)}
+#drawer{position:fixed;bottom:-100%;left:0;width:100%;background:var(--bg);border-top:2px solid var(--main);padding:25px;transition:.3s ease;z-index:1500;overflow-y:auto;max-height:80vh}
+#drawer.open{bottom:0}
+.lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:20px}
+.lib-btn{padding:10px;border:1px solid var(--main);font-size:9px;font-weight:800;text-align:center;text-transform:uppercase;cursor:pointer;color:var(--main)}
+
+/* Auteur */
+.author-box{display:block;margin-top:30px;text-align:right;font-size:9px;font-weight:700;text-transform:uppercase;color:var(--sub);cursor:pointer}
+#author-name{color:var(--main)}
+
+@media print{
+  body.dark-mode{--bg:#fff;--main:#000;--sub:#777;--grey:#ddd}
+  @page{size:A4;margin:1cm}
+  body{padding:0;font-size:10px;line-height:1.3}
+  .container{max-width:100%;width:100%}
+  header{margin-bottom:4px;padding-bottom:4px}
+  h1{font-size:16px}
+  #timestamp{margin-bottom:8px;font-size:8px}
+  .section-block{margin-bottom:8px;page-break-inside:avoid}
+  .section-title{font-size:12px;margin-bottom:6px;padding-bottom:2px}
+  td{padding:4px 0;font-size:10px}
+  .col-v{font-size:11px}
+  .note-area{background:#fff!important;color:#000!important;border:none!important;border-left:1px solid #ccc!important;padding:3px 6px;min-height:10px;margin-bottom:8px;font-size:9px}
+  .author-box{display:block!important;margin-top:6px;text-align:right;color:#000!important}
+  #author-name{color:#000!important}
+  .vol-bar,.btn-add-ing,#drawer,#modal-overlay,.tab:not(.active),.v-chip:not(.active),.text-btn,.lang-toggle,.right-group,.tabs-nav,.btn-add,.btn-small,.btn-delete,.culture-footer,.no-print{display:none!important}
+  .ingredient-item,.culture-card{border:1px solid #ccc;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div id="modal-overlay"><div class="modal" id="modal-box"></div></div>
+<div class="container">
+  <header>
+    <div class="header-row">
+      <h1>MycoLab</h1>
+      <div class="right-group">
+        <span class="text-btn" id="dark-toggle" onclick="APP.toggleDarkMode()" aria-label="Basculer mode sombre">Sombre</span>
+        <div class="lang-toggle" onclick="APP.toggleLang()" aria-label="Changer la langue">
+          <span id="l-fr">FR</span>/<span id="l-en">EN</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-row bottom">
+      <div id="timestamp" onclick="APP.pickDate()">...</div>
+      <span class="text-btn" onclick="APP.openSaveModal()">Sauvegarde</span>
+    </div>
+    <div class="tabs-nav">
+      <span class="tab-view" data-view="recipes" onclick="APP.setView('recipes')">Recettes</span>
+      <span class="tab-view" data-view="ingredients" onclick="APP.setView('ingredients')">Ingrédients</span>
+      <span class="tab-view" data-view="cultures" onclick="APP.setView('cultures')">Cultures</span>
+      <span class="tab-view" data-view="suivi" onclick="APP.setView('suivi')">Suivi</span>
+    </div>
+  </header>
+
+  <div id="content"></div>
+
+  <footer class="author-box" onclick="APP.prompt('Auteur:',APP.state.author||'',v=>APP.setAuthor(v))">
+    <span id="author-name">...</span>
+  </footer>
+</div>
+
+<div id="drawer">
+  <div style="display:flex;justify-content:space-between;margin-bottom:15px;align-items:center">
+    <span style="font-weight:900;font-size:10px" id="cat-label">CATALOGUE</span>
+    <span onclick="APP.toggleDrawer(!1)" style="cursor:pointer;font-size:28px">&times;</span>
+  </div>
+  <div class="lib-grid" id="lib-list"></div>
+</div>
+
+<script>
+(function() {
+  // ============================================================
+  // SECTION 1 — CONSTANTS & i18n
+  // ============================================================
+
+  /** Application version — bump on breaking localStorage changes */
+  const APP_VERSION = '3.2';
+
+  /**
+   * PHASE_KINDS — Taxonomie analytique des étapes de culture.
+   * Utilisée par : calcIR, eventForm (kind), renderCultures (affichage).
+   * Chaque événement reçoit un `kind` string calculé depuis son texte libre.
+   * Cela permet une analyse structurée sans forcer l'utilisateur à choisir dans une liste.
+   */
+  const PHASE_KINDS = {
+    inoculation:  { re: /inocul|incubat/i,                        score: +10, label: 'Incubation'  },
+    colonisation: { re: /colonis|mycél|mycelium|blanc/i,        score: +15, label: 'Colonisation' },
+    pinning:      { re: /primordia|pins|pin\b|pinning|ébauche/i, score: +20, label: 'Pinning'     },
+    recolte:      { re: /r[ée]colte|harvest/i,                  score: +40, label: 'Récolte'      },
+    observation:  { re: /sain|healthy|vigoureux|dense|rapide|propre|clean/i, score: +5, label: 'Observation' },
+    contamination:{ re: /contam|moisissure|mold|tricho|bactér/i, score: -60, label: 'Contamination' },
+    echec:        { re: /[eé]chec|fail|abort|perdu|mort/i,      score: -40, label: 'Échec'        },
+  };
+
+  /**
+   * Détecte le kind analytique d'un texte d'événement.
+   * Priorité : 1) Stores.refs.data.eventTypes (éditables) → correspondance exacte de label
+   *            2) PHASE_KINDS (regex statiques, fallback)
+   *            3) 'note' si aucune correspondance
+   */
+  function detectKind(text) {
+    if(!text) return 'note';
+    const lower = text.toLowerCase();
+    // 1. Correspondance exacte ou partielle sur les labels du référentiel éditable
+    try {
+      const refs = Stores.refs.data.eventTypes;
+      for(const t of refs) {
+        if(lower.includes(t.label.toLowerCase())) return t.kind || t.id;
+      }
+    } catch(e) { /* Stores.refs pas encore initialisé au démarrage */ }
+    // 2. Regex PHASE_KINDS
+    for(const [k, def] of Object.entries(PHASE_KINDS)) {
+      if(def.re.test(text)) return k;
+    }
+    return 'note';
+  }
+
+  const LANGS = {
+    fr: {
+      tabRecipes: "Recettes", tabIngredients: "Ingrédients", tabCultures: "Cultures", tabSuivi: "Suivi",
+      noCultures: "Aucune culture.", noCulturesToDisplay: "Aucune culture à afficher.", createBatch: "Créer un lot",
+      titles: ["I. Incubation","II. Culture","III. Casing"],
+      total:"TOTAL", addIng:"+ INGRÉDIENT", notes:"Notes techniques...",
+      cancel:"ANNULER", del:"SUPPRIMER", rename:"RENOMMER", equi:"EQUILIBRER", manual:"MANUEL", other:"+ AUTRE",
+      dark:"SOMBRE", light:"CLAIR", authorDef:"AUTEUR NON DÉFINI", pdf:"PDF", save:"SAUVEGARDER", restore:"RESTAURER",
+      setDate:"Choisir une date", today:"Aujourd'hui", addIngredient:"+ INGRÉDIENT", editIngredient:"Modifier ingrédient",
+      density:"Masse vol. (g/ml)", ph:"pH", notes:"Notes", addCulture:"+ NOUVEAU LOT", strain:"Variété",
+      generation:"Génération", startDate:"Date début", event:"Événement", type:"Type", date:"Date", recipe:"Recette",
+      events:"Événements", addEvent:"+ Événement", editEvent:"Modifier événement", deleteEvent:"Supprimer", noRecipe:"Aucune",
+      labelName:"Nom", labelDensity:"Masse volumique (g/ml)", labelPh:"pH", labelNotes:"Notes",
+      placeholderName:"ex: Fibre de coco", placeholderDensity:"ex: 0.12", placeholderPh:"ex: 6.5", placeholderNotes:"Observations...",
+      lib: [
+        { name:"Fibre de Coco", density:0.12, ph:6.5, notes:"Idéal pour la rétention d'eau. Pasteuriser avant utilisation." },
+        { name:"Vermiculite", density:0.15, ph:7.0, notes:"Améliore l'aération et la rétention d'eau. Stériliser ou pasteuriser." },
+        { name:"Gypse", density:1.50, ph:7.5, notes:"Source de calcium et sulfate. À utiliser en petite quantité (5-10%)." },
+        { name:"Blanc de Meudon", density:0.80, ph:8.0, notes:"Augmente le pH. Utiliser avec parcimonie (1-5%)." },
+        { name:"Chaux", density:0.60, ph:12.0, notes:"Très alcalin. À utiliser en traces pour ajuster le pH (0.5-2%)." },
+        { name:"Paille hachée", density:0.08, ph:6.0, notes:"Riche en lignine. Pasteuriser avant utilisation." },
+        { name:"Épeautre", density:0.70, ph:6.5, notes:"Céréale nutritive. Cuire ou pasteuriser." },
+        { name:"Carton", density:0.25, ph:7.0, notes:"Source de cellulose. Découper finement et pasteuriser." },
+        { name:"Marc de Café", density:0.30, ph:6.2, notes:"Riche en azote. Sécher légèrement avant utilisation pour éviter les moisissures." },
+        { name:"Sciure de bois", density:0.20, ph:5.5, notes:"Préférer les bois feuillus (chêne, peuplier). Pasteuriser." },
+        { name:"Copeaux", density:0.15, ph:5.8, notes:"Taille moyenne idéale : 1-3 cm. Pasteuriser." },
+        { name:"Chanvre", density:0.10, ph:7.0, notes:"Excellente rétention d'eau. Pasteuriser." },
+        { name:"Tourbe", density:0.20, ph:4.0, notes:"Acide : à mélanger avec de la chaux pour ajuster le pH. Pasteuriser." },
+        { name:"Perlite", density:0.10, ph:7.0, notes:"Inerte. Améliore l'aération. Stériliser ou rincer avant utilisation." },
+        { name:"Seigle", density:0.75, ph:6.0, notes:"Céréale riche. Cuire ou pasteuriser pour éviter les contaminations." },
+        { name:"Millet", density:0.80, ph:6.5, notes:"Alternative au seigle. Cuire avant utilisation." },
+        { name:"Blé", density:0.80, ph:6.5, notes:"Classique pour les substrats à grains. Cuire 20-30 min." },
+        { name:"Sorgho", density:0.75, ph:6.5, notes:"Résistant aux moisissures. Cuire avant utilisation." },
+        { name:"Agar-Agar", density:0.50, ph:7.0, notes:"Utilisé en milieu gélosé pour l'isolement. Stériliser." },
+        { name:"Extrait de Malt", density:1.20, ph:5.5, notes:"Source de nutriments pour les milieux liquides ou gélosés. Stériliser." },
+        { name:"Composte", density:0.40, ph:7.5, notes:"Riche en nutriments. Pasteuriser pour éliminer les pathogènes." },
+        { name:"Fumier", density:0.50, ph:8.0, notes:"À composter longuement avant utilisation. Pasteuriser." }
+      ]
+    },
+    en: {
+      tabRecipes: "Recipes", tabIngredients: "Ingredients", tabCultures: "Batches", tabSuivi: "Tracking",
+      noCultures: "No batches.", noCulturesToDisplay: "No batches to display.", createBatch: "Create a batch",
+      titles: ["I. Incubation","II. Culture","III. Casing"],
+      total:"TOTAL", addIng:"+ INGREDIENT", notes:"Technical notes...",
+      cancel:"CANCEL", del:"DELETE", rename:"RENAME", equi:"BALANCE", manual:"MANUAL", other:"+ OTHER",
+      dark:"DARK", light:"LIGHT", authorDef:"AUTHOR NOT SET", pdf:"PDF", save:"BACKUP", restore:"RESTORE",
+      setDate:"Pick a date", today:"Today", addIngredient:"+ INGREDIENT", editIngredient:"Edit ingredient",
+      density:"Density (g/ml)", ph:"pH", notes:"Notes", addCulture:"+ NEW BATCH", strain:"Strain",
+      generation:"Generation", startDate:"Start date", event:"Event", type:"Type", date:"Date", recipe:"Recipe",
+      events:"Events", addEvent:"+ Event", editEvent:"Edit event", deleteEvent:"Delete", noRecipe:"None",
+      labelName:"Name", labelDensity:"Density (g/ml)", labelPh:"pH", labelNotes:"Notes",
+      placeholderName:"e.g., Coco coir", placeholderDensity:"e.g., 0.12", placeholderPh:"e.g., 6.5", placeholderNotes:"Observations...",
+      lib: [
+        { name:"Coco Coir", density:0.12, ph:6.5, notes:"Ideal for water retention. Pasteurize before use." },
+        { name:"Vermiculite", density:0.15, ph:7.0, notes:"Improves aeration and water retention. Sterilize or pasteurize." },
+        { name:"Gypsum", density:1.50, ph:7.5, notes:"Calcium and sulfate source. Use in small amounts (5-10%)." },
+        { name:"Chalk", density:0.80, ph:8.0, notes:"Raises pH. Use sparingly (1-5%)." },
+        { name:"Lime", density:0.60, ph:12.0, notes:"Very alkaline. Use traces to adjust pH (0.5-2%)." },
+        { name:"Chopped Straw", density:0.08, ph:6.0, notes:"Rich in lignin. Pasteurize before use." },
+        { name:"Spelt", density:0.70, ph:6.5, notes:"Nutritious grain. Cook or pasteurize." },
+        { name:"Cardboard", density:0.25, ph:7.0, notes:"Cellulose source. Chop finely and pasteurize." },
+        { name:"Coffee Grounds", density:0.30, ph:6.2, notes:"Nitrogen rich. Dry slightly to prevent mold." },
+        { name:"Sawdust", density:0.20, ph:5.5, notes:"Prefer hardwoods (oak, poplar). Pasteurize." },
+        { name:"Wood Chips", density:0.15, ph:5.8, notes:"Ideal size 1-3 cm. Pasteurize." },
+        { name:"Hemp", density:0.10, ph:7.0, notes:"Excellent water retention. Pasteurize." },
+        { name:"Peat", density:0.20, ph:4.0, notes:"Acidic: mix with lime to adjust pH. Pasteurize." },
+        { name:"Perlite", density:0.10, ph:7.0, notes:"Inert. Improves aeration. Sterilize or rinse." },
+        { name:"Rye", density:0.75, ph:6.0, notes:"Rich grain. Cook or pasteurize to avoid contamination." },
+        { name:"Millet", density:0.80, ph:6.5, notes:"Alternative to rye. Cook before use." },
+        { name:"Wheat", density:0.80, ph:6.5, notes:"Classic grain substrate. Cook 20-30 min." },
+        { name:"Sorghum", density:0.75, ph:6.5, notes:"Resistant to mold. Cook before use." },
+        { name:"Agar-Agar", density:0.50, ph:7.0, notes:"Used in gelled media for isolation. Sterilize." },
+        { name:"Malt Extract", density:1.20, ph:5.5, notes:"Nutrient source for liquid or gelled media. Sterilize." },
+        { name:"Compost", density:0.40, ph:7.5, notes:"Nutrient rich. Pasteurize to eliminate pathogens." },
+        { name:"Manure", density:0.50, ph:8.0, notes:"Compost thoroughly before use. Pasteurize." }
+      ]
+    }
+  };
+
+  // ============================================================
+  // SECTION 2 — UTILITIES
+  // ============================================================
+
+  // ---------- 2. UTILITAIRES ----------
+  const Utils = {
+    slugify(str) {
+      return str.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    },
+    /**
+     * translateIngredientName(name, targetLang)
+     * Traduit un nom d'ingrédient FR→EN ou EN→FR via les listes lib.
+     * Matching par index : LANGS.fr.lib[i] ↔ LANGS.en.lib[i].
+     * Retourne le nom original si aucune correspondance trouvée.
+     */
+    translateIngredientName(name, targetLang) {
+      if(!name) return name;
+      const srcLang = targetLang === 'en' ? 'fr' : 'en';
+      const srcLib  = LANGS[srcLang].lib;
+      const dstLib  = LANGS[targetLang].lib;
+      const idx = srcLib.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
+      return idx !== -1 ? dstLib[idx].name : name;
+    },
+    formatDate(timestamp, lang) {
+      const d = timestamp ? new Date(timestamp) : new Date();
+      return d.toLocaleDateString(lang === 'fr' ? 'fr-CH' : 'en-GB', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    },
+    // LOGIQUE MÉTIER — Affichage unifié Vol ou Poids selon le mode actif.
+    // En mode poids : Volume(L) × Densité(kg/L) × 1000 = grammes.
+    // Densité manquante → fallback 1.0 kg/L (eau) pour les volumes, logique cs/cc inchangée.
+    calcIngredientDisplay(ing, vol, weightMode) {
+      try {
+        // Helper : valide et normalise la densité. Retourne [density, isEstimate]
+        const safeDensity = (raw, fallback) => {
+          const d = parseFloat(raw);
+          if(!isFinite(d) || d <= 0) return [fallback, true];
+          return [d, false];
+        };
+
+        if (ing.u === 'cs' || ing.u === 'cc') {
+          const mlPerUnit = ing.u === 'cs' ? 15 : 5;
+          const nUnits = (ing.r || 0) * vol * 10 / (ing.u === 'cs' ? 150 : 50);
+          const volumeL = nUnits * mlPerUnit / 1000;
+          const fullIng = (ing.ingId
+            ? Stores.ingredients.data.find(i => i.id === ing.ingId)
+            : null) || Stores.ingredients.data.find(i => i.name.toLowerCase() === (ing.n||'').toLowerCase());
+          const [density, est] = safeDensity(fullIng?.density, 1.2);
+          const grams = Math.round(volumeL * density * 1000);
+          return `${grams}<span class="unit-s">g</span>`;
+        }
+
+        const l = (ing.r || 0) * vol / 1000;
+        if(!weightMode) return `${l.toFixed(2)}<span class="unit-s">L</span>`;
+
+        const fullIng = (ing.ingId
+          ? Stores.ingredients.data.find(i => i.id === ing.ingId)
+          : null) || Stores.ingredients.data.find(i => i.name.toLowerCase() === (ing.n||'').toLowerCase());
+        const [density, est] = safeDensity(fullIng?.density, 1.0);
+        const grams = Math.round(l * density * 1000);
+        const prefix = '';
+        if(grams >= 1000) return `${prefix}${(grams/1000).toFixed(2)}<span class="unit-s">kg</span>`;
+        return `${prefix}${grams}<span class="unit-s">g</span>`;
+      } catch(e) { return '—'; }
+    },
+    calcIngredientValue(ing, vol) { return this.calcIngredientDisplay(ing, vol, false); },
+    // LOGIQUE MÉTIER — Indice de Réussite (0-100)
+    // Source de vérité pour les scores : Stores.refs.data.eventTypes (éditables)
+    // Fallback sur PHASE_KINDS si kind non trouvé dans les refs.
+    calcIR(culture) {
+      try {
+        if(!culture.events || culture.events.length === 0) return null;
+        let score = 0;
+        culture.events.forEach(ev => {
+          const t = ev.type || '';
+          const kind = ev.kind || detectKind(t);
+          // Score depuis le référentiel éditable (priorité)
+          let evScore = 0;
+          try {
+            const ref = Stores.refs.data.eventTypes.find(r => r.id === kind || r.kind === kind);
+            evScore = ref ? ref.score : (PHASE_KINDS[kind] ? PHASE_KINDS[kind].score : 0);
+          } catch(e) {
+            evScore = PHASE_KINDS[kind] ? PHASE_KINDS[kind].score : 0;
+          }
+          score += evScore;
+          // Bonus récolte selon masse déclarée
+          if(kind === 'recolte') {
+            const m = t.match(/(\d+)\s*g\b/);
+            if(m) {
+              const g = parseInt(m[1]);
+              if(g >= 200) score += 15;
+              else if(g >= 100) score += 8;
+              else if(g >= 50)  score += 4;
+            }
+          }
+        });
+        return Math.max(0, Math.min(100, Math.round(score)));
+      } catch(e) {
+        console.error('[MycoLab] calcIR failed:', e);
+        return null;
+      }
+    },
+    irColor(score) {
+      if(score === null) return 'var(--sub)';
+      if(score >= 70) return 'var(--main)';
+      if(score >= 40) return '#e07a00';
+      return 'var(--danger)';
+    },
+    toDDMMYYYY(ts) {
+      const d = new Date(ts);
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      return `${dd}.${mm}.${d.getFullYear()}`;
+    },
+    /**
+     * cleanSectionName — Retire les préfixes numériques romains pour l'affichage.
+     * "I. Incubation" → "Incubation", "II. Culture" → "Culture"
+     * Les données stockées restent intactes.
+     */
+    cleanSectionName(name) {
+      if(!name) return name;
+      return name.replace(/^[IVX]+\.\s*/i, '').trim();
+    },
+    generateCultureId(strain, gen) {
+      const prefix = strain.substring(0,4).toUpperCase().replace(/[^A-Z]/g,'')||'LOT';
+      const g = gen||'G1';
+      const d = new Date().toISOString().slice(0,10).replace(/-/g,'');
+      return `${prefix}-${g}-${d}`;
+    },
+    /**
+     * migrateEvents — Migration douce des anciens événements.
+     * - Ajoute `kind` si absent (détection automatique)
+     * - Ajoute `eid` unique si absent
+     * - Re-trie les événements par date
+     * - Opération idempotente, ne touche jamais les champs déjà définis.
+     */
+    /**
+     * migrateRecipeIngIds — Ajoute ingId aux ingrédients de recettes existants.
+     * Lookup par nom (legacy) → si ingrédient trouvé dans le store, stocke son id.
+     * Opération idempotente.
+     */
+    migrateRecipeIngIds() {
+      let dirty = false;
+      try {
+        Stores.recipes.data.forEach(section => {
+          section.g.forEach(group => {
+            (group.i || []).forEach(ing => {
+              if(!ing.ingId) {
+                const found = Stores.ingredients.data.find(i => i.name.toLowerCase() === ing.n.toLowerCase());
+                if(found) { ing.ingId = found.id; dirty = true; }
+              }
+            });
+          });
+        });
+        if(dirty) Stores.recipes.save();
+      } catch(e) {
+        console.error('[MycoLab] migrateRecipeIngIds failed:', e);
+      }
+    },
+    migrateEvents() {
+      let dirty = false;
+      try {
+        Stores.cultures.data.forEach(c => {
+          const events = c.events || [];
+          events.forEach(ev => {
+            if(!ev.kind) {
+              ev.kind = detectKind(ev.type || '');
+              dirty = true;
+            }
+            if(!ev.eid) {
+              ev.eid = `ev_${ev.date || Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+              dirty = true;
+            }
+            // Valide la date — remplace les timestamps invalides par now
+            if(!ev.date || isNaN(ev.date)) {
+              ev.date = Date.now();
+              dirty = true;
+            }
+          });
+          // Re-trie par date après migration
+          c.events = events.sort((a,b) => a.date - b.date);
+        });
+        if(dirty) Stores.cultures.save();
+      } catch(e) {
+        console.error('[MycoLab] migrateEvents failed:', e);
+      }
+    },
+    // LOGIQUE MÉTIER — Snapshot figé d'une recette au moment de la création du lot.
+    // Inclut : composition, ratios, densités, pH, volume, température cible.
+    // Une culture ne dépend jamais d'une recette modifiée après coup.
+    createRecipeSnapshot(sectionIdx, groupIdx, recipesStore, ingredientsStore) {
+      try {
+        const section = recipesStore[sectionIdx];
+        if (!section) return null;
+        const group = section.g[groupIdx];
+        if (!group) return null;
+        const snapshotIngredients = group.i.map(ing => {
+          // Lookup priorité : ingId (stable) > name (fallback legacy)
+          const fullIng = (ing.ingId
+            ? ingredientsStore.data.find(i => i.id === ing.ingId)
+            : null) || ingredientsStore.data.find(i => i.name.toLowerCase() === ing.n.toLowerCase());
+          return {
+            name: ing.n,
+            ingId: ing.ingId || (fullIng ? fullIng.id : null),
+            percent: ing.r / 10,
+            unit: ing.u,
+            density: fullIng ? fullIng.density : null,
+            ph: fullIng ? fullIng.ph : null,
+            notes: fullIng ? fullIng.notes : ''
+          };
+        });
+        return {
+          sectionName: section.t,
+          groupName: group.n,
+          volume: section.v,
+          temp_c: section.temp_c || null,
+          ingredients: snapshotIngredients
+        };
+      } catch(e) {
+        console.error('[MycoLab] createRecipeSnapshot failed:', e);
+        return null;
+      }
+    }
+  };
+
+  // ============================================================
+  // VALIDATION — Sanitize & validate user inputs
+  // Returns { valid: bool, error: string }
+  // ============================================================
+  const Validate = {
+    _strip(s) { return String(s).replace(/[<>&"'`]/g, ''); },
+    name(val) {
+      const v = this._strip(val || '').trim();
+      if(v.length < 2) return { valid:false, error: State.lang==='fr' ? 'Nom trop court (min 2 car.)' : 'Name too short (min 2 chars)' };
+      if(v.length > 50) return { valid:false, error: State.lang==='fr' ? 'Nom trop long (max 50 car.)' : 'Name too long (max 50 chars)' };
+      return { valid:true, value:v };
+    },
+    density(val) {
+      const n = parseFloat(String(val).replace(',','.'));
+      if(isNaN(n) || n <= 0) return { valid:false, error: State.lang==='fr' ? 'Densité invalide (> 0)' : 'Invalid density (> 0)' };
+      if(n > 5) return { valid:false, error: State.lang==='fr' ? 'Densité trop élevée (max 5)' : 'Density too high (max 5)' };
+      return { valid:true, value:n };
+    },
+    ph(val) {
+      const n = parseFloat(String(val).replace(',','.'));
+      if(isNaN(n) || n < 0 || n > 14) return { valid:false, error: State.lang==='fr' ? 'pH invalide (0–14)' : 'Invalid pH (0–14)' };
+      return { valid:true, value:n };
+    },
+    volume(val) {
+      const n = parseFloat(String(val).replace(',','.'));
+      if(isNaN(n) || n <= 0) return { valid:false, error: State.lang==='fr' ? 'Volume invalide (> 0)' : 'Invalid volume (> 0)' };
+      return { valid:true, value:n };
+    }
+  };
+
+  // ============================================================
+  // TOAST — Non-intrusive notifications (bottom-right, auto-dismiss)
+  // ============================================================
+  const Toast = {
+    _el: null,
+    _timer: null,
+    _init() {
+      if(this._el) return;
+      this._el = document.createElement('div');
+      this._el.id = 'toast-container';
+      this._el.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none';
+      document.body.appendChild(this._el);
+    },
+    show(message, type='info', duration=3000) {
+      this._init();
+      const bg = type==='success' ? '#2ecc71' : type==='error' ? '#ff4d4d' : '#666';
+      const el = document.createElement('div');
+      el.textContent = message;
+      el.style.cssText = `background:${bg};color:#fff;padding:10px 16px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:260px;box-shadow:0 4px 12px rgba(0,0,0,.2)`;
+      this._el.appendChild(el);
+      requestAnimationFrame(() => el.style.opacity = '1');
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 220);
+      }, duration);
+    },
+    success(msg, d) { this.show(msg, 'success', d); },
+    error(msg, d)   { this.show(msg, 'error', d); },
+    info(msg, d)    { this.show(msg, 'info', d); }
+  };
+
+  // ============================================================
+  // SAFE STORAGE — Wrapper localStorage.setItem with quota handling
+  // ============================================================
+  function safeSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch(e) {
+      if(e.name === 'QuotaExceededError' || e.code === 22) {
+        Toast.error(State.lang==='fr' ? 'Stockage plein — exporte tes données' : 'Storage full — export your data');
+      }
+      console.error('[MycoLab] localStorage quota exceeded:', key);
+      return false;
+    }
+  }
+  // Pure business logic functions — no DOM access, no side effects.
+  // All inputs are plain data; all outputs are plain data.
+  // Renderer reads from these, never computes inline.
+  // ============================================================
+  const Analytics = {
+    /**
+     * getPhaseDurations(events)
+     * Returns { d1, d2, d3, dTotal, phases } from a sorted event array.
+     * Uses `kind` field (structured) before falling back to regex.
+     * All returned values are integers (days) or null.
+     */
+    getPhaseDurations(events) {
+      try {
+        if(!events || events.length < 2) return { phases: [], dTotal: null };
+        const D = 86400000;
+        const findKind = (...kinds) => events.find(e => kinds.includes(e.kind || detectKind(e.type || '')));
+        const findKindLast = (...kinds) => [...events].reverse().find(e => kinds.includes(e.kind || detectKind(e.type || '')));
+        const days = (a, b) => (a && b && b.date > a.date) ? Math.round((b.date - a.date) / D) : null;
+
+        const evInoc  = findKind('inoculation');
+        const evColon = findKind('colonisation');
+        const evPrimo = findKind('pinning');
+        const evRecol = findKindLast('recolte');
+
+        const d1 = days(evInoc, evColon);
+        const d2 = days(evColon || evInoc, evPrimo);
+        const d3 = days(evPrimo || evColon || evInoc, evRecol);
+        const dTotal = days(evInoc, evRecol) ?? (
+          events.length >= 2 ? Math.round((events[events.length-1].date - events[0].date) / D) : null
+        );
+
+        const phases = [];
+        if(d1 !== null) phases.push(`Incub. ${d1}j`);
+        if(d2 !== null) phases.push(`Culture ${d2}j`);
+        if(d3 !== null) phases.push(`Culture ${d3}j`);
+
+        return { phases, dTotal, hasMarkers: !!(evInoc && evRecol) };
+      } catch(e) {
+        console.error('[MycoLab] getPhaseDurations failed:', e);
+        return { phases: [], dTotal: null };
+      }
+    },
+
+    /**
+     * getRecipeLinks(culture)
+     * Returns structured recipe display data from event snapshots.
+     * Handles legacy `c.recipeSnapshot` (single) and modern event-attached snapshots.
+     */
+    getRecipeLinks(culture) {
+      try {
+        const eventsWithRecipe = (culture.events || []).filter(e => e?.recipeSnapshot);
+        if(eventsWithRecipe.length) {
+          const totalVol = eventsWithRecipe.reduce((sum, e) => sum + (e.recipeSnapshot?.volume || 0), 0);
+          return {
+            lines: eventsWithRecipe.map(e => {
+              const s = e.recipeSnapshot;
+              return {
+                label: e.type || '',
+                sectionName: s.sectionName || '?',
+                groupName: s.groupName || '',
+                volume: s.volume ?? null,
+                temp_c: s.temp_c ?? null
+              };
+            }),
+            totalVol
+          };
+        }
+        if(culture.recipeSnapshot) {
+          const s = culture.recipeSnapshot;
+          return {
+            lines: [{ label: '', sectionName: s.sectionName || '?', groupName: s.groupName || '', volume: s.volume ?? null, temp_c: s.temp_c ?? null }],
+            totalVol: s.volume || 0
+          };
+        }
+        return { lines: [], totalVol: 0 };
+      } catch(e) {
+        return { lines: [], totalVol: 0 };
+      }
+    },
+
+    /**
+     * getCultureAge(culture, referenceDate)
+     * Returns days since date_start, floored at 0.
+     */
+    getCultureAge(culture, referenceDate) {
+      try {
+        if(!culture.date_start) return 0;
+        return Math.max(0, Math.round((referenceDate - culture.date_start) / 86400000));
+      } catch(e) { return 0; }
+    }
+  };
+
+  // ---------- 3. STORES ----------
+  const Stores = {
+    recipes: {
+      data: [],
+      save() {
+        try {
+          safeSet('mycolab_recipes_v1', JSON.stringify(this.data));
+        } catch(e) {
+          console.error('[MycoLab] recipes save failed:', e);
+        }
+      },
+      load() {
+        try {
+          const raw = localStorage.getItem('mycolab_recipes_v1');
+          if(raw) {
+            this.data = JSON.parse(raw);
+            // Migration des titres de phase vers la nouvelle terminologie
+            const RENAME = {
+              'I. Inoculations': 'I. Incubation', 'I. Inoculation': 'I. Incubation',
+              'Inoculations': 'Incubation', 'Inoculation': 'Incubation',
+              'II. Fructification': 'II. Culture', 'II. Fruiting': 'II. Culture',
+              'Fructification': 'Culture', 'Fruiting': 'Culture',
+              'II. Substrats': 'II. Culture',    'II. Substrates': 'II. Culture',
+              'Substrats': 'Culture', 'Substrates': 'Culture'
+            };
+            let dirty = false;
+            this.data.forEach(s => {
+              if(RENAME[s.t]) { s.t = RENAME[s.t]; dirty = true; }
+            });
+            if(dirty) this.save();
+            return;
+          }
+          // Migration from legacy key
+          const old = localStorage.getItem('mycolab_v43_0');
+          if(old) {
+            this.data = JSON.parse(old);
+            this.save();
+            return;
+          }
+        } catch(e) {
+          console.error('[MycoLab] recipes load failed, resetting:', e);
+        }
+        this.data = this.defaultData();
+      },
+      defaultData() {
+        const e = State.lang === 'fr';
+        return [
+          {id:1, t:e?"I. Incubation":"I. Incubation", v:.5, cv:[.5,1,2,5], note:"", temp_c:23, g:[{n:e?"Bocal Carton":"Cardboard Jar", i:[{n:e?"Carton":"Cardboard", r:450, u:"vol"}, {n:e?"Vermiculite":"Vermiculite", r:400, u:"vol"}, {n:e?"Épeautre":"Spelt", r:100, u:"vol"}, {n:e?"Blanc de Meudon":"Chalk", r:50, u:"cs"}]}]},
+          {id:2, t:e?"II. Culture":"II. Culture", v:7, cv:[5,7,12,15], note:"", temp_c:23, g:[{n:"Bulk 7L", i:[{n:e?"Fibre de Coco":"Coco Coir", r:600, u:"vol"}, {n:e?"Vermiculite":"Vermiculite", r:200, u:"vol"}, {n:e?"Paille hachée":"Chopped Straw", r:100, u:"vol"}, {n:e?"Gypse":"Gypsum", r:100, u:"cs"}]}]},
+          {id:3, t:e?"III. Casing":"III. Casing", v:1.2, cv:[.5,1,1.2,2], note:"", temp_c:20, g:[{n:"Casing pH+", i:[{n:e?"Vermiculite":"Vermiculite", r:670, u:"vol"}, {n:e?"Fibre de Coco":"Coco Coir", r:280, u:"vol"}, {n:e?"Blanc de Meudon":"Chalk", r:40, u:"cs"}, {n:e?"Chaux":"Lime", r:10, u:"cc"}]}]}
+        ];
+      }
+    },
+    ingredients: {
+      data: [],
+      save() {
+        try {
+          safeSet('mycolab_ingredients_v1', JSON.stringify(this.data));
+        } catch(e) {
+          console.error('[MycoLab] ingredients save failed:', e);
+        }
+      },
+      load() {
+        try {
+          const raw = localStorage.getItem('mycolab_ingredients_v1');
+          if(raw) { this.data = JSON.parse(raw); return; }
+        } catch(e) {
+          console.error('[MycoLab] ingredients load failed, resetting:', e);
+        }
+        // Default: seed from i18n library
+        this.data = LANGS[State.lang].lib.map(item => ({
+          id: Utils.slugify(item.name),
+          name: item.name,
+          density: item.density !== undefined ? item.density : null,
+          ph: item.ph !== undefined ? item.ph : null,
+          notes: item.notes || ''
+        }));
+        this.save();
+      },
+      add(ing) { this.data.push(ing); this.save(); State.notify(); },
+      update(id, newData) {
+        const idx = this.data.findIndex(i=>i.id===id);
+        if(idx!==-1){ this.data[idx] = {...this.data[idx], ...newData}; this.save(); State.notify(); }
+      },
+      delete(id) { this.data = this.data.filter(i=>i.id!==id); this.save(); State.notify(); },
+      findByName(name) { return this.data.find(i=>i.name.toLowerCase()===name.toLowerCase()); }
+    },
+    cultures: {
+      data: [],
+      save() {
+        try {
+          const json = JSON.stringify(this.data);
+          safeSet('mycolab_cultures_v1', json);
+          // Auto-snapshot silencieux — écrase à chaque save, récupérable en urgence
+          safeSet('mycolab_snapshot', json);
+        } catch(e) {
+          console.error('[MycoLab] cultures save failed:', e);
+        }
+      },
+      load() {
+        try {
+          const raw = localStorage.getItem('mycolab_cultures_v1');
+          if(raw) { this.data = JSON.parse(raw); return; }
+        } catch(e) {
+          console.error('[MycoLab] cultures load failed, resetting:', e);
+        }
+        this.data = [];
+      },
+      add(c) { this.data.push(c); this.save(); State.notify(); },
+      update(id, newData) {
+        const idx = this.data.findIndex(c=>c.id===id);
+        if(idx!==-1){ this.data[idx] = {...this.data[idx], ...newData}; this.save(); State.notify(); }
+      },
+      delete(id) { this.data = this.data.filter(c=>c.id!==id); this.save(); State.notify(); },
+      addEvent(id, event) {
+        const c = this.data.find(c=>c.id===id);
+        if(c){
+          // Garantit un identifiant unique sur chaque événement
+          if(!event.eid) event.eid = `ev_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+          c.events.push(event);
+          c.events.sort((a,b) => (a.date||0) - (b.date||0));
+          this.save();
+          State.notify();
+        }
+      },
+      updateEvent(id, idx, newEv) {
+        const c = this.data.find(c=>c.id===id);
+        if(c && c.events[idx]){
+          // Préserve l'eid existant
+          newEv.eid = c.events[idx].eid || `ev_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+          c.events[idx] = newEv;
+          c.events.sort((a,b) => (a.date||0) - (b.date||0));
+          this.save();
+          State.notify();
+        }
+      },
+      deleteEvent(id, idx) {
+        const c = this.data.find(c=>c.id===id);
+        if(c && c.events[idx]){ c.events.splice(idx,1); this.save(); State.notify(); }
+      }
+    },
+
+    // ============================================================
+    // RÉFÉRENTIELS ÉDITABLES
+    // Chaque entrée : { id, label, kind, score }
+    //   id    : slug unique (généré depuis le label)
+    //   label : texte affiché dans les chips et dans le journal
+    //   kind  : clé analytique → doit correspondre à une clé de PHASE_KINDS
+    //           ou à 'note' pour les types neutres
+    //   score : impact sur l'IR (peut être personnalisé par l'utilisateur)
+    // Les refs sont la couche éditable au-dessus de PHASE_KINDS (qui reste le fallback).
+    // ============================================================
+    refs: {
+      data: { eventTypes: [] },
+      save() {
+        try {
+          safeSet('mycolab_refs_v1', JSON.stringify(this.data));
+        } catch(e) {
+          console.error('[MycoLab] refs save failed:', e);
+        }
+      },
+      load() {
+        try {
+          const raw = localStorage.getItem('mycolab_refs_v1');
+          if(raw) { this.data = JSON.parse(raw); return; }
+        } catch(e) {
+          console.error('[MycoLab] refs load failed, resetting:', e);
+        }
+        this.data = this.defaultData();
+        this.save();
+      },
+      defaultData() {
+        // Seedé depuis PHASE_KINDS — première installation uniquement
+        return {
+          eventTypes: Object.entries(PHASE_KINDS).map(([kind, def]) => ({
+            id: kind,
+            label: def.label,
+            kind,
+            score: def.score
+          }))
+        };
+      },
+      addEventType(label) {
+        const id = label.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+          .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        if(this.data.eventTypes.find(t => t.id === id)) return id; // already exists
+        // Auto-detect kind via PHASE_KINDS regex
+        const kind = detectKind(label);
+        const score = PHASE_KINDS[kind] ? PHASE_KINDS[kind].score : 0;
+        this.data.eventTypes.push({ id, label, kind, score });
+        this.save();
+        return id;
+      },
+      deleteEventType(id) {
+        // Never delete PHASE_KINDS defaults (those have id === kind)
+        const t = this.data.eventTypes.find(t => t.id === id);
+        if(t && PHASE_KINDS[t.id]) return; // protect built-ins
+        this.data.eventTypes = this.data.eventTypes.filter(t => t.id !== id);
+        this.save();
+        State.notify();
+      }
+    }
+  };
+
+  // ============================================================
+  // SECTION 4 — APPLICATION STATE
+  // Single source of truth for UI state (view, lang, dark mode,
+  // date override). Uses observer pattern: State.subscribe(fn).
+  // ============================================================
+
+  // ---------- 4. ÉTAT ----------
+  const State = {
+    view: 'recipes',
+    lang: 'fr',
+    dark: false,
+    author: '',
+    customDate: null,
+    gIdx: [0,0,0],
+    activeCat: 0,
+    pressTimer: null,
+    pctMode: {},
+    unitMode: 'L',     // 'L' | 'kg' — affichage global des volumes dans les recettes
+    listeners: [],
+    subscribe(fn) { this.listeners.push(fn); },
+    notify() { this.listeners.forEach(fn => fn()); },
+    setView(v) { this.view = v; this.notify(); },
+    toggleLang() {
+      const newLang = this.lang === 'fr' ? 'en' : 'fr';
+      // Traduire les noms d'ingrédients dans le store
+      Stores.ingredients.data.forEach(ing => {
+        const translated = Utils.translateIngredientName(ing.name, newLang);
+        if(translated !== ing.name) {
+          ing.name = translated;
+          // Mettre à jour l'id (slug) et propager dans les recettes
+          const newId = Utils.slugify(translated);
+          Stores.recipes.data.forEach(section => {
+            section.g.forEach(group => {
+              group.i.forEach(ri => {
+                if(ri.ingId === ing.id || ri.n.toLowerCase() === ing.name.toLowerCase()) {
+                  ri.n = translated;
+                  ri.ingId = newId;
+                }
+              });
+            });
+          });
+          ing.id = newId;
+        }
+      });
+      Stores.ingredients.save();
+      Stores.recipes.save();
+      this.lang = newLang;
+      safeSet('mycolab_lang', newLang);
+      this.notify();
+    },
+    toggleDarkMode() { this.dark = !this.dark; document.body.classList.toggle('dark-mode', this.dark); safeSet('mycolab_dark', this.dark); this.notify(); },
+    setAuthor(a) { this.author = a; safeSet('mycolab_author', a); this.notify(); },
+    setCustomDate(ts) { this.customDate = ts; if(ts) safeSet('mycolab_customDate', ts); else localStorage.removeItem('mycolab_customDate'); this.notify(); },
+    getEffectiveDate() { return this.customDate ? new Date(this.customDate) : new Date(); },
+    load() {
+      const l = localStorage.getItem('mycolab_lang'); if(l) this.lang = l;
+      const d = localStorage.getItem('mycolab_dark'); if(d==='true') this.dark=true;
+      const a = localStorage.getItem('mycolab_author'); if(a) this.author=a;
+      const cd = localStorage.getItem('mycolab_customDate'); if(cd) this.customDate=parseInt(cd);
+    }
+  };
+
+  // ============================================================
+  // SECTION 5 — MODAL MANAGER
+  // Centralised overlay system. All destructive actions and forms
+  // go through Modal to avoid native confirm()/prompt() calls
+  // which are blocked in PWA contexts.
+  // ============================================================
+
+  // ---------- 5. MODAL MANAGER ----------
+  const Modal = {
+    show(html) {
+      document.getElementById('modal-box').innerHTML = html;
+      document.getElementById('modal-overlay').style.display = 'flex';
+    },
+    close() { document.getElementById('modal-overlay').style.display = 'none'; },
+    /**
+     * Modal.confirm — Confirmation dialog avant action destructive.
+     * Bilingue FR/EN selon State.lang.
+     */
+    confirm(title, message, onConfirm, onCancel) {
+      const L = LANGS[State.lang];
+      this.show(`
+        <div style="font-size:13px;font-weight:900;margin-bottom:8px">${title}</div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:24px;line-height:1.5">${message}</div>
+        <div class="modal-btn danger" id="confirm-ok">${L.del}</div>
+        <div class="modal-btn" id="confirm-cancel">${L.cancel}</div>
+      `);
+      document.getElementById('confirm-ok').onclick = () => { Modal.close(); onConfirm && onConfirm(); };
+      document.getElementById('confirm-cancel').onclick = () => { Modal.close(); onCancel && onCancel(); };
+    },
+    prompt(title, defaultValue, callback) {
+      const L = LANGS[State.lang];
+      this.show(`
+        <div style="font-size:10px;font-weight:900;margin-bottom:10px">${title}</div>
+        <input type="text" id="p-in" class="modal-input" value="${defaultValue}">
+        <div class="modal-btn black" id="p-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      const inp = document.getElementById('p-in');
+      inp.focus(); inp.select();
+      document.getElementById('p-ok').onclick = () => { callback(inp.value); Modal.close(); };
+    },
+    datePicker(defaultDate, callback) {
+      const L = LANGS[State.lang];
+      const val = defaultDate || new Date().toISOString().split('T')[0];
+      this.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${L.setDate}</div>
+        <input type="date" id="modal-date" class="modal-input" value="${val}">
+        <div class="modal-btn black" id="date-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      document.getElementById('date-ok').onclick = () => { callback(document.getElementById('modal-date').value); Modal.close(); };
+    },
+    ingredientForm(ing, callback) {
+      const L = LANGS[State.lang];
+      const isNew = !ing;
+      const name = ing ? ing.name : '';
+      const density = ing ? (ing.density||'') : '';
+      const ph = ing ? (ing.ph||'') : '';
+      const notes = ing ? (ing.notes||'') : '';
+      this.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${isNew ? L.addIngredient : L.editIngredient}</div>
+        <div class="modal-label">${L.labelName}</div><input type="text" id="modal-ing-name" class="modal-input" value="${name}" placeholder="${L.placeholderName}">
+        <div class="modal-label">${L.labelDensity}</div><input type="number" id="modal-ing-density" class="modal-input small" value="${density}" step="0.01" placeholder="${L.placeholderDensity}">
+        <div class="modal-label">${L.labelPh}</div><input type="number" id="modal-ing-ph" class="modal-input small" value="${ph}" step="0.1" min="0" max="14" placeholder="${L.placeholderPh}">
+        <div class="modal-label">${L.labelNotes}</div><textarea id="modal-ing-notes" class="modal-input small" rows="2" placeholder="${L.placeholderNotes}">${notes}</textarea>
+        <div class="modal-btn black" id="ing-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      document.getElementById('ing-ok').onclick = () => {
+        const newName = document.getElementById('modal-ing-name').value.trim();
+        if(!newName) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Nom requis</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        callback({
+          name: newName,
+          density: parseFloat(document.getElementById('modal-ing-density').value) || null,
+          ph: parseFloat(document.getElementById('modal-ing-ph').value) || null,
+          notes: document.getElementById('modal-ing-notes').value
+        });
+        Modal.close();
+      };
+    },
+    cultureForm(culture, callback) {
+      const L = LANGS[State.lang];
+      const isNew = !culture;
+      const strain = culture ? culture.strain : '';
+      const generation = culture ? culture.generation : 'G1';
+      const startDate = culture ? new Date(culture.date_start).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      const notes = culture ? (culture.notes||'') : '';
+
+      this.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${isNew ? L.addCulture : 'Modifier le lot'}</div>
+        <input type="text" id="modal-strain" class="modal-input" value="${strain}" placeholder="${L.strain}">
+        <input type="text" id="modal-generation" class="modal-input" value="${generation}" placeholder="${L.generation} (ex: G1)">
+        <input type="date" id="modal-start" class="modal-input" value="${startDate}">
+        <textarea id="modal-notes" class="modal-input" placeholder="${L.notes}">${notes}</textarea>
+        <div class="modal-btn black" id="cult-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      document.getElementById('cult-ok').onclick = () => {
+        const s = document.getElementById('modal-strain').value.trim();
+        const g = document.getElementById('modal-generation').value.trim()||'G1';
+        const d = document.getElementById('modal-start').value;
+        if(!s || !d) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Champs requis</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Variété et date obligatoires.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        callback({ strain:s, generation:g, date_start: new Date(d+'T12:00:00').getTime(), notes: document.getElementById('modal-notes').value });
+        Modal.close();
+      };
+    },
+    eventForm(event, callback) {
+      const L = LANGS[State.lang];
+      const isNew = !event;
+      const date = event ? new Date(event.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      const type = event ? event.type : '';
+      const currentRecipe = event ? (event.recipeRef || '') : '';
+
+      // Build recipe options
+      let recipeOpts = `<option value="">— Aucune recette —</option>`;
+      Stores.recipes.data.forEach((section, si) => {
+        section.g.forEach((group, gi) => {
+          const val = `${si}:${gi}`;
+          recipeOpts += `<option value="${val}" ${currentRecipe===val?'selected':''}>${section.t} / ${group.n}</option>`;
+        });
+      });
+
+      // Chips depuis le référentiel éditable (pas PHASE_KINDS hardcodé)
+      const refTypes = Stores.refs.data.eventTypes;
+      const kindChips = refTypes.map(t =>
+        `<span onclick="document.getElementById('modal-event-type').value=(document.getElementById('modal-event-type').value?document.getElementById('modal-event-type').value+' ':'')+this.dataset.label;this.style.color='var(--main)'" data-label="${t.label}" style="font-size:9px;font-weight:800;text-transform:uppercase;padding:4px 8px;border:1px solid var(--grey);cursor:pointer;color:var(--sub);user-select:none">${t.label}</span>`
+      ).join('');
+      // Chip "+" pour créer un nouveau type dans le référentiel
+      const addChip = `<span onclick="APP.addRefEventType()" style="font-size:9px;font-weight:800;padding:4px 8px;border:1px solid var(--main);cursor:pointer;color:var(--main);user-select:none">+</span>`;
+
+      const tempVal = event ? (event.temp_c != null ? event.temp_c : '') : '';
+      this.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${isNew ? L.addEvent : L.editEvent}</div>
+        <div class="modal-label">${L.date}</div>
+        <input type="date" id="modal-event-date" class="modal-input" value="${date}">
+        <div class="modal-label" style="margin-top:10px">Type</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+          ${kindChips}${addChip}
+        </div>
+        <div class="modal-label">Note libre</div>
+        <input type="text" id="modal-event-type" class="modal-input" placeholder="ex: Récolte 150g — Chapeaux bien formés" value="${type}">
+        <div class="modal-label" style="margin-top:8px">Température réelle (°C)</div>
+        <input type="number" id="modal-event-temp" class="modal-input small" value="${tempVal}" min="0" max="50" step="0.5" inputmode="decimal" placeholder="ex: 23">
+        <div class="modal-label" style="margin-top:8px">Recette utilisée (optionnel)</div>
+        <select id="modal-event-recipe" class="modal-input" style="font-size:12px;padding:6px 0;background:transparent;border-bottom:2px solid var(--main);color:var(--main);appearance:none;cursor:pointer">${recipeOpts}</select>
+        <div class="modal-btn black" id="ev-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      document.getElementById('ev-ok').onclick = () => {
+        const d = document.getElementById('modal-event-date').value;
+        const t = document.getElementById('modal-event-type').value.trim();
+        if(!d || !t) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">${State.lang==='fr'?'Date et note requis':'Date and note required'}</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        const recipeRef = document.getElementById('modal-event-recipe').value || null;
+        let recipeSnapshot = null;
+        if(recipeRef) {
+          const [si, gi] = recipeRef.split(':').map(Number);
+          recipeSnapshot = Utils.createRecipeSnapshot(si, gi, Stores.recipes.data, Stores.ingredients);
+        }
+        const kind = detectKind(t);
+        const tempInput = parseFloat(document.getElementById('modal-event-temp').value);
+        const temp_c = !isNaN(tempInput) ? tempInput : null;
+        callback({ date: new Date(d+'T12:00:00').getTime(), type: t, kind, temp_c, recipeRef, recipeSnapshot });
+        Modal.close();
+      };
+    }
+  };
+  window.Modal = Modal;
+
+  // ============================================================
+  // SECTION 6 — RENDERER
+  // Pure render functions — no side effects, no data mutations.
+  // Each render*() method reads from Stores and State, then
+  // writes to #content via innerHTML.
+  // calcIR(culture): scans events for keyword signals to produce
+  //   a 0-100 success index (IR — Indice de Réussite).
+  // ============================================================
+
+  // ---------- 6. RENDU ----------
+  const Renderer = {
+    render() {
+      const L = LANGS[State.lang];
+      document.getElementById('l-fr').className = State.lang === 'fr' ? 'active' : '';
+      document.getElementById('l-en').className = State.lang === 'en' ? 'active' : '';
+      document.getElementById('dark-toggle').innerText = State.dark ? L.light : L.dark;
+      document.getElementById('author-name').innerText = State.author || L.authorDef;
+      document.getElementById('timestamp').innerText = Utils.formatDate(State.getEffectiveDate(), State.lang);
+      document.querySelectorAll('.tab-view').forEach(tab => {
+        const view = tab.dataset.view;
+        if (view === 'recipes') tab.innerText = L.tabRecipes;
+        else if (view === 'ingredients') tab.innerText = L.tabIngredients;
+        else if (view === 'cultures') tab.innerText = L.tabCultures;
+        else if (view === 'suivi') tab.innerText = L.tabSuivi;
+        tab.classList.toggle('active', view === State.view);
+      });
+
+      if (State.view === 'recipes') this.renderRecipes();
+      else if (State.view === 'ingredients') this.renderIngredients();
+      else if (State.view === 'cultures') this.renderCultures();
+      else if (State.view === 'suivi') this.renderSuivi();
+    },
+    renderRecipes() {
+      const L = LANGS[State.lang];
+      let html = '';
+      Stores.recipes.data.forEach((section, idx) => {
+        // Guard : gIdx peut être stale si un groupe a été supprimé
+        const safeGIdx = Math.min(State.gIdx[idx] || 0, section.g.length - 1);
+        if(State.gIdx[idx] !== safeGIdx) State.gIdx[idx] = safeGIdx;
+        const gIdx = safeGIdx;
+        const group = section.g[gIdx];
+        if(!group) return; // section sans groupe — ne pas planter
+        const total = group.i.reduce((a,ing)=>a+ing.r,0)/10;
+        const isWeight = State.unitMode === 'kg';
+        html += `<div class="section-block">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--main);margin-bottom:20px;padding-bottom:5px">
+            <div class="section-title" style="border:none;margin:0;padding:0" onclick="APP.prompt('Edit:','${section.t}',v=>{APP.recipes[${idx}].t=v;APP.saveRecipes();APP.render()})">${section.t}</div>
+          </div>
+          <nav class="vol-bar">
+            ${section.cv.sort((a,b)=>a-b).map(v => `<div class="v-chip ${section.v==v?'active':''}" onmousedown="APP.startP(event,'vol',[${idx},${v}])" ontouchstart="APP.startP(event,'vol',[${idx},${v}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setV(${idx},${v})">${v}L</div>`).join('')}
+            <div onclick="APP.prompt('Vol:','',v=>APP.addV(${idx},v))" style="cursor:pointer;font-weight:800;font-size:18px">+</div>
+          </nav>
+          <div class="tabs-row">
+            ${section.g.map((g,i)=>`<div class="tab ${gIdx==i?'active':''}" onmousedown="APP.startP(event,'tab',[${idx},${i}])" ontouchstart="APP.startP(event,'tab',[${idx},${i}])" onmouseup="APP.endP()" ontouchend="APP.endP()" onclick="APP.setT(${idx},${i})">${g.n}</div>`).join('')}
+            <div class="tab" onclick="APP.prompt('Name:','',e=>APP.addT(${idx},e))" style="color:var(--main);font-size:14px">+</div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;min-height:15px;margin-bottom:4px">
+            <div class="lang-toggle"><span class="${State.unitMode==='L'?'active':''}" onclick="APP.setUnit('L')">L</span>/<span class="${State.unitMode==='kg'?'active':''}" onclick="APP.setUnit('kg')">kg</span></div>
+          </div>
+          <table>
+            ${group.i.map((ing,i)=>`
+              <tr>
+                <td class="col-n" onmousedown="APP.startP(event,'ing',[${idx},${i}])" ontouchstart="APP.startP(event,'ing',[${idx},${i}])" onmouseup="APP.endP()" ontouchend="APP.endP()">${ing.n}</td>
+                <td class="col-p" onclick="APP.openRatio(${idx},${i})">${(ing.r/10).toFixed(1)}%</td>
+                <td class="col-v">${Utils.calcIngredientDisplay(ing, section.v, isWeight)}</td>
+               </tr>
+            `).join('')}
+           </table>
+          <div class="section-footer" style="display:flex;align-items:center;padding:15px 0 10px 0">
+            <button class="btn-add-ing" style="width:45%;text-align:left" onclick="APP.openDrawer(${idx})">${L.addIng}</button>
+            <div style="width:20%;text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;color:${Math.abs(total-100)<0.1?'#999':'var(--danger)'}">
+              ${total.toFixed(1)}%
+            </div>
+            <div style="width:35%"></div>
+          </div>
+          <textarea class="note-area" placeholder="${L.notes}" oninput="APP.recipes[${idx}].note=this.value;APP.saveRecipes()">${section.note||''}</textarea>
+        </div>`;
+      });
+      document.getElementById('content').innerHTML = html;
+      this.renderLib();
+    },
+    renderIngredients() {
+      const L = LANGS[State.lang];
+      let html = '<div class="ingredients-list">';
+      const usage = this.getIngredientUsage();
+      const sorted = [...Stores.ingredients.data].sort((a,b) => {
+        const ua = usage[a.id] || 0;
+        const ub = usage[b.id] || 0;
+        return ub - ua;
+      });
+      sorted.forEach(ing => {
+        html += `<div class="ingredient-item" style="position:relative;padding-right:80px">
+          <span class="ing-name">${ing.name}</span>
+          <span class="ing-details">ρ=${ing.density||'?'} kg/L | pH=${ing.ph||'?'}</span>
+          <span class="ing-notes" style="font-size:9px;color:var(--sub);width:100%">${ing.notes||''}</span>
+          <div style="position:absolute;top:10px;right:10px;display:flex;gap:10px;align-items:center">
+            <button style="background:none;border:none;padding:0;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--sub);cursor:pointer;text-decoration:underline" onclick="APP.editIngredient('${ing.id}')">éditer</button>
+            <button class="btn-delete" onclick="APP.deleteIngredient('${ing.id}')">×</button>
+          </div>
+        </div>`;
+      });
+      html += `<button class="btn-add" onclick="APP.addIngredientPrompt()">${L.addIngredient}</button></div>`;
+      document.getElementById('content').innerHTML = html;
+    },
+    renderCultures() {
+      const L = LANGS[State.lang];
+      if(Stores.cultures.data.length===0){
+        document.getElementById('content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--sub)">${L.noCultures}<button class="btn-add" onclick="APP.addCulturePrompt()">${L.createBatch}</button></div>`;
+        return;
+      }
+      let html = '<div class="cultures-list">';
+      Stores.cultures.data.forEach(c=>{
+
+        // --- Indice de Réussite ---
+        const ir = Utils.calcIR(c);
+        const irColor = Utils.irColor(ir);
+        const irLabel = ir === null ? '—' : `${ir}%`;
+
+        // --- Recettes liées — via Analytics ---
+        const recipeLinks = Analytics.getRecipeLinks(c);
+        let recipeTag = '';
+        if(recipeLinks.lines.length) {
+          const lines = recipeLinks.lines.map(l => {
+            const vol = l.volume != null ? ` · ${l.volume}L` : '';
+            const temp = l.temp_c != null ? ` · ${l.temp_c}°C` : '';
+            const prefix = l.label ? `${l.label} : ` : '';
+            return `<div style="font-size:9px;color:var(--sub);font-family:monospace">↳ ${prefix}${Utils.cleanSectionName(l.sectionName)} / ${l.groupName}${vol}${temp}</div>`;
+          }).join('');
+          const volLabel = recipeLinks.totalVol > 0
+            ? `<div style="font-size:9px;color:var(--sub);font-weight:800;margin-top:2px">VOL TOTAL : ${recipeLinks.totalVol.toFixed(1)}L</div>` : '';
+          recipeTag = `<div style="margin:4px 0">${lines}${volLabel}</div>`;
+        }
+
+        // --- Durées par phase — via Analytics ---
+        let dureeHtml = '';
+        try {
+          const { phases, dTotal, hasMarkers } = Analytics.getPhaseDurations(c.events || []);
+          if(dTotal !== null) {
+            const phaseStr = phases.length ? phases.join(' · ') + ' — ' : '';
+            dureeHtml = `<div style="font-size:9px;color:var(--sub);font-style:italic;margin-bottom:4px">⏱ ${phaseStr}Total : ${dTotal}j</div>`;
+          }
+        } catch(e) { console.error('[MycoLab] phase display:', e); }
+
+        // --- Journal de bord ---
+        let evHtml = '';
+        if(c.events.length){
+          evHtml = '<div style="margin:8px 0 4px 0;border-left:1px solid var(--grey);padding-left:8px">' + dureeHtml +
+            c.events.map((ev, evi) =>
+              `<div style="display:flex;justify-content:space-between;align-items:center;padding:2px 0;line-height:1.6">
+                <span style="font-size:10px;color:var(--sub)">${Utils.toDDMMYYYY(ev.date)} : ${ev.type}${ev.temp_c != null ? `<span style="font-size:9px;font-family:monospace;margin-left:5px">(${ev.temp_c}°C)</span>` : ''}${ev.recipeSnapshot ? `<span style="font-size:8px;font-family:monospace;margin-left:4px;opacity:.7">· ${Utils.cleanSectionName(ev.recipeSnapshot.sectionName)}</span>` : ''}</span>
+                <span style="display:flex;gap:8px;flex-shrink:0;margin-left:8px">
+                  <button style="background:none;border:none;padding:0;font-size:9px;font-weight:800;text-transform:uppercase;color:var(--sub);cursor:pointer;text-decoration:underline" onclick="APP.editEventPrompt('${c.id}',${evi})">éditer</button>
+                  <button class="btn-delete" style="font-size:12px" onclick="APP.confirmDeleteEvent('${c.id}',${evi})">×</button>
+                </span>
+              </div>`
+            ).join('') +
+          '</div>';
+        }
+
+        html += `<div class="culture-card">
+          <div class="culture-header">
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1" onclick="APP.editCulture('${c.id}')">
+              <span class="culture-name">${c.strain} (${c.generation})</span>
+              <span class="culture-id">${c.id}</span>
+              ${irLabel !== '—' ? `<span style="font-size:11px;font-weight:900;color:var(--danger)">${irLabel}</span>` : ''}
+            </div>
+            <button class="btn-delete" onclick="APP.deleteCulture('${c.id}')" style="color:var(--danger);font-size:18px;line-height:1;flex-shrink:0" aria-label="Supprimer la culture ${c.id}">×</button>
+          </div>
+          <div class="culture-dates">${L.startDate} : ${Utils.toDDMMYYYY(c.date_start)}</div>
+          <div style="font-size:9px;color:var(--sub);margin:1px 0 4px 0">
+            Inoculé il y a ${Analytics.getCultureAge(c, State.getEffectiveDate())} jour(s)
+          </div>
+          ${recipeTag}
+          ${evHtml}
+          <div class="culture-footer">
+            <button class="btn-small" onclick="APP.addQuickEvent('${c.id}')">+ EVENT</button>
+            <button class="btn-small" onclick="APP.printCulture('${c.id}')">PDF</button>
+          </div>
+        </div>`;
+      });
+      html += `<button class="btn-add" onclick="APP.addCulturePrompt()">${L.addCulture}</button></div>`;
+      document.getElementById('content').innerHTML = html;
+    },
+    renderSuivi() {
+      const L   = LANGS[State.lang];
+      if(Stores.cultures.data.length === 0) {
+        document.getElementById('content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--sub)">${L.noCulturesToDisplay}<button class="btn-add" onclick="APP.setView('cultures')">${L.createBatch}</button></div>`;
+        return;
+      }
+
+      const D      = 86400000;
+      const PX     = 20;   // px per day — ~14 jours visibles
+      const loc    = State.lang === 'fr' ? 'fr-CH' : 'en-GB';
+      const todayTs = new Date().setHours(0,0,0,0);
+      const sorted  = [...Stores.cultures.data].sort((a,b) => a.date_start - b.date_start);
+
+      // ── Plage : 7j avant le plus ancien lot, min 365j, 90j après le dernier ──
+      let startTs = Infinity, endTs = -Infinity;
+      sorted.forEach(c => {
+        const s = new Date(c.date_start).setHours(0,0,0,0);
+        const lastEvTs = c.events.length
+          ? new Date(c.events[c.events.length-1].date).setHours(0,0,0,0)
+          : s;
+        startTs = Math.min(startTs, s);
+        endTs   = Math.max(endTs, lastEvTs, todayTs);
+      });
+      startTs -= 7 * D;            // 7 jours de marge à gauche
+      endTs   += 90 * D;           // 90 jours après le dernier événement
+      // Minimum 365 jours pour pouvoir défiler sur l'année
+      if((endTs - startTs) / D < 365) endTs = startTs + 365 * D;
+      const totalDays  = Math.ceil((endTs - startTs) / D);
+      const totalWidth = totalDays * PX;
+
+      // ── Tableau des jours ──────────────────────────────────────────
+      const days = Array.from({ length: totalDays }, (_, i) => {
+        const ts = startTs + i * D;
+        return { ts, dt: new Date(ts) };
+      });
+
+      // ── Ligne des mois : libellés abrégés, fond blanc ─────────────
+      const MONTH_ABBR = State.lang === 'fr'
+        ? ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc']
+        : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const monthMap = [];
+      days.forEach(({ dt }) => {
+        const mk = `${dt.getFullYear()}-${dt.getMonth()}`;
+        if(!monthMap.length || monthMap[monthMap.length-1].key !== mk)
+          monthMap.push({ key: mk, count: 1, year: dt.getFullYear(), month: dt.getMonth() });
+        else
+          monthMap[monthMap.length-1].count++;
+      });
+      const monthsHTML = monthMap.map(m => {
+        const lbl = `${MONTH_ABBR[m.month]} ${m.year}`;
+        return `<div class="gantt-month-cell" style="width:${m.count*PX}px;min-width:${m.count*PX}px">${lbl}</div>`;
+      }).join('');
+
+      // ── Ligne des jours : numéro + abréviation jour ───────────────
+      const DAY_NAMES = State.lang === 'fr'
+        ? ['Di','Lu','Ma','Me','Je','Ve','Sa']
+        : ['Su','Mo','Tu','We','Th','Fr','Sa'];
+      const daysHTML = days.map(({ ts, dt }) => {
+        const isToday   = ts === todayTs;
+        const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+        return `<button class="gantt-day-cell${isToday?' today':''}${isWeekend?' weekend':''}"
+          style="width:${PX}px;min-width:${PX}px"
+          onclick="APP.showDayLog('${dt.getFullYear()}','${dt.getMonth()}','${dt.getDate()}')"
+        ><span class="gantt-day-name">${DAY_NAMES[dt.getDay()]}</span><span class="gantt-day-num">${dt.getDate()}</span></button>`;
+      }).join('');
+
+      // ── Colonne des noms (fixe gauche) ────────────────────────────
+      let namesCells = '';
+      sorted.forEach(c => {
+        const ir = Utils.calcIR(c);
+        namesCells += `<div class="gantt-name-cell" onclick="APP.showCultureDetails('${c.id}')">
+          <div class="gantt-name-text">${c.strain}<br><span style="font-weight:400;color:var(--sub);font-size:7px">${c.generation}</span></div>
+          ${ir !== null ? `<div class="gantt-name-ir">${ir}%</div>` : ''}
+        </div>`;
+      });
+
+      // ── Rangées des lots ──────────────────────────────────────────
+      // Grille de fond partagée (générée une seule fois)
+      const colGrid = days.map(({ ts, dt }) => {
+        const cls = dt.getDay() === 1 ? ' week-start' : ts === todayTs ? ' today-col' : '';
+        return `<div class="gantt-col-cell${cls}" style="width:${PX}px;min-width:${PX}px"></div>`;
+      }).join('');
+
+      let bodyHTML = '';
+      sorted.forEach(c => {
+        const ir       = Utils.calcIR(c);
+        // Couleur de barre = dernier état enregistré
+        const lastKind = c.events.length ? (c.events[c.events.length-1].kind || 'note') : 'note';
+        const barClass = `ev-${lastKind}`;
+        const barStart = new Date(c.date_start).setHours(0,0,0,0);
+        const lastEv   = c.events.length
+          ? new Date(c.events[c.events.length-1].date).setHours(0,0,0,0)
+          : barStart;
+        const barEnd   = Math.min(lastEv, todayTs);
+        const barLeft  = ((barStart - startTs) / D) * PX;
+        const barW     = Math.max(((barEnd - barStart) / D) * PX + PX, PX);
+
+        const markers = c.events.map((ev, evi) => {
+          const evX    = ((new Date(ev.date).setHours(0,0,0,0) - startTs) / D) * PX + PX/2;
+          const kind   = ev.kind || 'note';
+          const tipTxt = `${Utils.toDDMMYYYY(ev.date)} · ${ev.type}${ev.temp_c != null ? ' ('+ev.temp_c+'°C)' : ''}`;
+          return `<button class="gantt-marker ${kind}"
+            style="left:${evX}px"
+            data-tip="${tipTxt.replace(/"/g,'&quot;')}"
+            aria-label="${tipTxt.replace(/"/g,'')}"
+            onclick="event.stopPropagation();APP.editEventPrompt('${c.id}',${evi})"
+          ></button>`;
+        }).join('');
+
+        bodyHTML += `<div class="gantt-body-row">
+          ${colGrid}
+          <div class="gantt-bars-layer">
+            ${((barStart <= todayTs && todayTs <= endTs) ? `<div class="gantt-today-line" style="left:${((todayTs - startTs)/D)*PX + PX/2}px"></div>` : '')}
+            <div class="gantt-bar ${barClass}" style="left:${barLeft}px;width:${barW}px"
+              onclick="APP.showCultureDetails('${c.id}')"></div>
+            ${markers}
+          </div>
+        </div>`;
+      });
+
+      // ── Calendrier d'activité 28j ─────────────────────────────────
+      const activeDays = new Set();
+      Stores.cultures.data.forEach(c =>
+        (c.events||[]).forEach(ev => {
+          const d = new Date(ev.date);
+          activeDays.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+        })
+      );
+      let calCells = '';
+      for(let i = 27; i >= 0; i--) {
+        const d   = new Date(todayTs - i*D);
+        const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        const active = activeDays.has(key);
+        const isToday = i === 0;
+        const lbl = d.getDate() === 1
+          ? `<span style="font-size:7px;display:block;font-weight:900">${d.toLocaleString(loc,{month:'short'}).toUpperCase()}</span>${d.getDate()}`
+          : d.getDate();
+        calCells += `<button
+          style="border:${isToday?'2px solid var(--main)':'1px solid var(--grey)'};padding:4px 2px;text-align:center;font-size:10px;font-weight:700;background:${active?'var(--main)':'transparent'};color:${active?'var(--bg)':'var(--sub)'};line-height:1.3;cursor:${active?'pointer':'default'};width:100%;font-family:inherit"
+          onclick="APP.showDayLog('${d.getFullYear()}','${d.getMonth()}','${d.getDate()}')"
+          ${!active ? 'tabindex="-1"' : ''}
+        >${lbl}</button>`;
+      }
+
+      document.getElementById('content').innerHTML = `
+        <div class="gantt-tooltip" id="gantt-tip"></div>
+        <div class="gantt-outer">
+          <div class="gantt-names-col">
+            <div class="gantt-names-header">Lots</div>
+            ${namesCells}
+          </div>
+          <div class="gantt-scroll" id="gantt-scroll">
+            <div class="gantt-grid" style="min-width:${totalWidth}px">
+              <div class="gantt-months-row">${monthsHTML}</div>
+              <div class="gantt-days-row">${daysHTML}</div>
+              <div class="gantt-body-rows">${bodyHTML}</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;font-size:9px;font-weight:700;text-transform:uppercase;color:var(--sub)">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#fff;border:1px solid #ccc;display:inline-block"></span>Incubation</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#d1d1d1;display:inline-block"></span>Observation</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#666;display:inline-block"></span>Colonisation</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block"></span>Récolte</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block"></span>Contamination</span>
+        </div>
+        <div style="padding-top:15px;border-top:1px solid var(--grey)">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Activité — 28 jours</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px">
+            ${['L','M','M','J','V','S','D'].map(d=>`<div style="text-align:center;font-size:8px;font-weight:800;color:var(--sub)">${d}</div>`).join('')}
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${calCells}</div>
+        </div>
+        <button class="btn-add" style="margin-top:16px" onclick="APP.promptAddEvent()">${L.addEvent}</button>
+        <div id="day-log" style="margin-top:12px"></div>
+      `;
+
+      // Auto-scroll vers aujourd'hui — délai pour laisser le navigateur rendre la grille
+      setTimeout(() => {
+        const gs = document.getElementById('gantt-scroll');
+        if(gs) gs.scrollLeft = Math.max(0, ((todayTs - startTs)/D)*PX - 80);
+      }, 60);
+
+      // Tooltips
+      const tip = document.getElementById('gantt-tip');
+      if(tip) {
+        document.querySelectorAll('.gantt-marker').forEach(el => {
+          el.addEventListener('mouseenter', () => { tip.textContent = el.dataset.tip; tip.classList.add('visible'); });
+          el.addEventListener('mousemove', e => { tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY-28)+'px'; });
+          el.addEventListener('mouseleave', () => tip.classList.remove('visible'));
+        });
+      }
+    },
+        renderLib() {
+      const L = LANGS[State.lang];
+      const libDiv = document.getElementById('lib-list');
+      const usage = this.getIngredientUsage();
+      const sorted = [...Stores.ingredients.data].sort((a,b) => {
+        const ua = usage[a.id] || 0;
+        const ub = usage[b.id] || 0;
+        return ub - ua;
+      });
+      libDiv.innerHTML = sorted.map(ing => `<div class="lib-btn" onclick="APP.addIng('${ing.name}')">${ing.name}</div>`).join('') +
+        `<div class="lib-btn" style="background:var(--main);color:var(--bg)" onclick="APP.prompt('Item:','',e=>APP.addIng(e))">${L.other}</div>`;
+    },
+    getIngredientUsage() {
+      const usage = {};
+      Stores.recipes.data.forEach(section => {
+        section.g.forEach(group => {
+          group.i.forEach(ing => {
+            const id = Utils.slugify(ing.n);
+            usage[id] = (usage[id] || 0) + 1;
+          });
+        });
+      });
+      return usage;
+    }
+  };
+
+  // ============================================================
+  // SECTION 7 — EVENT HANDLERS
+  // All user-triggered actions. Handlers mutate Stores or State,
+  // never the DOM directly. DOM updates flow via State.notify()
+  // → Renderer.render().
+  // ============================================================
+
+  // ---------- 7. HANDLERS (appelés depuis le HTML) ----------
+  const Handlers = {
+    setV(s, v) { Stores.recipes.data[s].v = v; Stores.recipes.save(); State.notify(); },
+    addV(s, v) { if(v && !isNaN(v)){ Stores.recipes.data[s].cv.push(parseFloat(v)); Stores.recipes.data[s].v=parseFloat(v); Stores.recipes.save(); State.notify(); } },
+    setT(s, g) { State.gIdx[s] = g; State.notify(); },
+    addT(s, name) { if(name){ Stores.recipes.data[s].g.push({n:name,i:[]}); State.gIdx[s]=Stores.recipes.data[s].g.length-1; Stores.recipes.save(); State.notify(); } },
+    delT(s, g) { if(Stores.recipes.data[s].g.length>1){ Stores.recipes.data[s].g.splice(g,1); State.gIdx[s]=0; Stores.recipes.save(); State.notify(); } },
+    editN(s, i, name) { if(name){ Stores.recipes.data[s].g[State.gIdx[s]].i[i].n = name; Stores.recipes.save(); State.notify(); } },
+    /** Open an ingredient picker modal — locked to existing Stores.ingredients entries */
+    pickIngredient(s, i) {
+      const current = Stores.recipes.data[s].g[State.gIdx[s]].i[i].n;
+      const opts = Stores.ingredients.data.map(ing =>
+        `<option value="${ing.name}" ${ing.name===current?'selected':''}>${ing.name}</option>`
+      ).join('');
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">Choisir l'ingrédient</div>
+        <select id="ing-pick" class="modal-input" style="font-size:13px;padding:8px 0;background:transparent;border-bottom:2px solid var(--main);color:var(--main);appearance:none;cursor:pointer">${opts}</select>
+        <div class="modal-btn black" id="ing-pick-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">ANNULER</div>
+      `);
+      document.getElementById('ing-pick-ok').onclick = () => {
+        const newName = document.getElementById('ing-pick').value;
+        if(newName) Handlers.editN(s, i, newName);
+        Modal.close();
+      };
+    },
+    /** Création d'un nouveau type d'événement dans le référentiel, depuis la modale événement */
+    addRefEventType() {
+      Modal.prompt('Nouveau type :', '', label => {
+        const trimmed = label.trim();
+        if(!trimmed) return;
+        Stores.refs.addEventType(trimmed);
+        // Re-ouvre la modale eventForm pour refléter le nouveau chip
+        // On déclenche simplement un re-render de la modale courante
+        State.notify();
+      });
+    },
+    /** Affiche les logs d'un jour sélectionné dans le calendrier */
+    showDayLog(year, month, day) {
+      const el = document.getElementById('day-log');
+      if(!el) return;
+      const events = [];
+      Stores.cultures.data.forEach(c => {
+        (c.events || []).forEach((ev, idx) => {
+          const d = new Date(ev.date);
+          if(String(d.getFullYear())===String(year) && String(d.getMonth())===String(month) && String(d.getDate())===String(day)) {
+            events.push({ c, ev, idx });
+          }
+        });
+      });
+      if(!events.length) { el.innerHTML = ''; return; }
+      const rows = events.map(({c, ev, idx}) =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--grey)">
+          <div>
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--sub);margin-right:6px">${c.strain}</span>
+            <span style="font-size:11px">${ev.type}</span>
+            ${ev.temp_c != null ? `<span style="font-size:9px;color:var(--sub);margin-left:6px">${ev.temp_c}°C</span>` : ''}
+          </div>
+          <button style="background:none;border:none;font-size:9px;font-weight:800;color:var(--sub);cursor:pointer;text-decoration:underline" onclick="APP.editEventPrompt('${c.id}',${idx})">éditer</button>
+        </div>`
+      ).join('');
+      const d = new Date(parseInt(year), parseInt(month), parseInt(day));
+      el.innerHTML = `<div style="border-top:1px solid var(--grey);padding-top:10px;margin-top:4px"><div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--sub);margin-bottom:6px">${Utils.toDDMMYYYY(d.getTime())} — ${events.length} événement(s)</div>${rows}</div>`;
+    },
+    /** Bascule globale L ↔ kg — même logique que toggleLang */
+    setUnit(unit) { State.unitMode = unit; State.notify(); },
+    /** Legacy */
+    togglePct() { State.unitMode = State.unitMode === 'kg' ? 'L' : 'kg'; State.notify(); },
+    /** Edit température cible d'une section de recette */
+    setTemp(s) {
+      const current = Stores.recipes.data[s].temp_c || '';
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">Température cible (°C)</div>
+        <input type="number" id="temp-input" class="modal-input" value="${current}" min="0" max="50" step="0.5" inputmode="decimal" placeholder="ex: 23">
+        <div class="modal-btn black" id="temp-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">ANNULER</div>
+      `);
+      const inp = document.getElementById('temp-input');
+      inp.focus(); inp.select();
+      document.getElementById('temp-ok').onclick = () => {
+        const val = parseFloat(inp.value);
+        try {
+          if(!isNaN(val) && val >= 0 && val <= 40) {
+            Stores.recipes.data[s].temp_c = val;
+            Stores.recipes.save();
+            State.notify();
+          }
+        } catch(e) { console.error('[MycoLab] setTemp failed:', e); }
+        Modal.close();
+      };
+    },
+    delI(s, i) { Stores.recipes.data[s].g[State.gIdx[s]].i.splice(i,1); Stores.recipes.save(); State.notify(); },
+    openRatio(s, i) {
+      const L = LANGS[State.lang];
+      const group = Stores.recipes.data[s].g[State.gIdx[s]];
+      const ing = group.i[i];
+      const others = group.i.reduce((a,it,idx)=>a+(idx!==i?it.r:0),0)/10;
+      const avail = Math.max(0, 100-others);
+      const current = (ing.r/10).toFixed(1);
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${ing.n}</div>
+        <div class="modal-label">Pourcentage (%)</div>
+        <input type="number" id="ratio-input" class="modal-input" value="${current}" min="0" max="100" step="0.1" style="margin-bottom:20px">
+        <div class="modal-btn black" id="ratio-ok">OK</div>
+        <div class="modal-btn" onclick="APP.setR(${s},${i},${avail}); Modal.close();">${L.equi} (${avail.toFixed(1)}%)</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      const input = document.getElementById('ratio-input');
+      input.focus(); input.select();
+      document.getElementById('ratio-ok').onclick = () => {
+        const val = parseFloat(input.value);
+        if(!isNaN(val) && val >= 0 && val <= 100) APP.setR(s, i, val);
+        else Modal.close();
+      };
+    },
+    // LOGIQUE MÉTIER — Mise à jour du ratio d'un ingrédient (0-100%)
+    setR(s, i, percent) {
+      try {
+        const val = parseFloat(percent);
+        if(val == null || isNaN(val) || val < 0 || val > 100) { Modal.close(); return; }
+        Stores.recipes.data[s].g[State.gIdx[s]].i[i].r = Math.round(val * 10);
+        Stores.recipes.save();
+        State.notify();
+      } catch(e) {
+        console.error('[MycoLab] setR failed:', e);
+      }
+      Modal.close();
+    },
+    addIng(name) {
+      if(!name) return;
+      // Guard : activeCat doit pointer sur une section valide
+      const catIdx = State.activeCat;
+      if(catIdx < 0 || catIdx >= Stores.recipes.data.length) return;
+      const section = Stores.recipes.data[catIdx];
+      const grpIdx  = State.gIdx[catIdx] || 0;
+      if(!section.g[grpIdx]) return;
+
+      let ing = Stores.ingredients.findByName(name);
+      if(!ing) {
+        const id = Utils.slugify(name);
+        const newIng = { id, name, density: null, ph: null, notes: '' };
+        Stores.ingredients.data.push(newIng);
+        Stores.ingredients.save();
+        ing = newIng;
+      }
+      const isPowder = ing.density != null && ing.density > 0.3;
+      const type = name.toLowerCase().match(/meudon|gypse|chaux|chalk|lime|gypsum|malt|agar/) ? 'cs'
+                  : isPowder ? 'cs' : 'vol';
+      section.g[grpIdx].i.push({ n: name, ingId: ing.id, r: 0, u: type });
+      Stores.recipes.save();
+      State.notify();
+      document.getElementById('drawer').classList.remove('open');
+    },
+    startP(e, type, data) {
+      if(State.pressTimer) clearTimeout(State.pressTimer);
+      State.pressTimer = setTimeout(() => {
+        if(type === 'tab') Handlers.openTabMenu(data[0], data[1]);
+        else Handlers.confirmDel(type, data);
+      }, 450);
+    },
+    endP() { if(State.pressTimer) clearTimeout(State.pressTimer); },
+    openTabMenu(s, g) {
+      const L = LANGS[State.lang];
+      Modal.show(`
+        <div style="font-weight:900;font-size:11px;margin-bottom:15px;text-transform:uppercase">${Stores.recipes.data[s].g[g].n}</div>
+        <div class="modal-btn black" id="m-rename">${L.rename}</div>
+        <div class="modal-btn danger" id="m-del">${L.del}</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+      document.getElementById('m-rename').onclick = () => {
+        Modal.close();
+        Modal.prompt(L.rename+':', Stores.recipes.data[s].g[g].n, n => { if(n){ Stores.recipes.data[s].g[g].n = n; Stores.recipes.save(); State.notify(); } });
+      };
+      document.getElementById('m-del').onclick = () => { Handlers.delT(s,g); Modal.close(); };
+    },
+    confirmDel(type, data) {
+      const L = LANGS[State.lang];
+      Modal.show(`
+        <div style="height:15px"></div>
+        <div class="modal-btn black" onclick="Modal.close()">${L.cancel}</div>
+        <div class="modal-btn danger" id="del-btn">${L.del}</div>
+      `);
+      document.getElementById('del-btn').onclick = () => {
+        if(type === 'vol') Handlers.delV(data[0], data[1]);
+        if(type === 'ing') Handlers.delI(data[0], data[1]);
+        Modal.close();
+      };
+    },
+    delV(s, v) {
+      Stores.recipes.data[s].cv = Stores.recipes.data[s].cv.filter(x=>x!==v);
+      if(Stores.recipes.data[s].v == v) Stores.recipes.data[s].v = Stores.recipes.data[s].cv[0]||0.5;
+      Stores.recipes.save();
+      State.notify();
+    },
+    addIngredientPrompt() {
+      Modal.ingredientForm(null, ing => {
+        const id = Utils.slugify(ing.name);
+        if(Stores.ingredients.data.find(i=>i.id===id)) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Déjà existant</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Un ingrédient avec ce nom existe déjà.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        Stores.ingredients.add({id, ...ing});
+      });
+    },
+    editIngredient(id) {
+      const ing = Stores.ingredients.data.find(i=>i.id===id);
+      if(ing) Modal.ingredientForm(ing, newData => {
+        const newId = Utils.slugify(newData.name);
+        if(newId !== id && Stores.ingredients.data.find(i=>i.id===newId)) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Nom déjà utilisé</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Un ingrédient avec ce nom existe déjà.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        // Propagation : renommer dans toutes les recettes si le nom change
+        if(newData.name !== ing.name) {
+          Stores.recipes.data.forEach(section => {
+            section.g.forEach(group => {
+              group.i.forEach(ri => {
+                if(ri.n.toLowerCase() === ing.name.toLowerCase()) ri.n = newData.name;
+              });
+            });
+          });
+          Stores.recipes.save();
+        }
+        Stores.ingredients.update(id, {...newData, id: newId});
+      });
+    },
+    deleteIngredient(id) {
+      const ing = Stores.ingredients.data.find(i=>i.id===id);
+      const name = ing ? ing.name : id;
+      const msg  = State.lang==='fr' ? `Supprimer "${name}" définitivement ?` : `Delete "${name}" permanently?`;
+      Modal.confirm(State.lang==='fr' ? 'Supprimer l\'ingrédient' : 'Delete ingredient', msg, () => {
+        Stores.ingredients.delete(id);
+        Toast.success(State.lang==='fr' ? 'Ingrédient supprimé' : 'Ingredient deleted');
+      });
+    },
+    addCulturePrompt() {
+      Modal.cultureForm(null, data => {
+        const id = Utils.generateCultureId(data.strain, data.generation);
+        Stores.cultures.add({
+          id,
+          strain: data.strain,
+          generation: data.generation,
+          date_start: data.date_start,
+          events: [],
+          notes: data.notes
+        });
+        // Immediately open event form so first event (inoculation) can be logged with a recipe
+        setTimeout(() => {
+          Modal.eventForm(null, ev => Stores.cultures.addEvent(id, ev));
+        }, 100);
+      });
+    },
+    editCulture(id) {
+      const c = Stores.cultures.data.find(c=>c.id===id);
+      if(c) Modal.cultureForm(c, data => Stores.cultures.update(id, data));
+    },
+    deleteCulture(id) {
+      const cult = Stores.cultures.data.find(c=>c.id===id);
+      const name = cult ? `${cult.strain} (${cult.generation})` : id;
+      const msg  = State.lang==='fr' ? `Supprimer le lot "${name}" et tous ses événements ?` : `Delete batch "${name}" and all its events?`;
+      Modal.confirm(State.lang==='fr' ? 'Supprimer le lot' : 'Delete batch', msg, () => {
+        Stores.cultures.delete(id);
+        Toast.success(State.lang==='fr' ? 'Lot supprimé' : 'Batch deleted');
+      });
+    },
+    addQuickEvent(id) {
+      Modal.eventForm(null, ev => Stores.cultures.addEvent(id, ev));
+    },
+    addEventToCulture(id) {
+      Modal.eventForm(null, ev => Stores.cultures.addEvent(id, ev));
+    },
+    editEventPrompt(id, idx) {
+      const c = Stores.cultures.data.find(c=>c.id===id);
+      if(c && c.events[idx]) {
+        Modal.eventForm(c.events[idx], newEv => Stores.cultures.updateEvent(id, idx, newEv));
+      }
+    },
+    deleteEvent(id, idx) {
+      const c = Stores.cultures.data.find(c=>c.id===id);
+      const evLabel = c && c.events[idx] ? c.events[idx].type : '';
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:5px">Supprimer l'événement ?</div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:20px">${evLabel}</div>
+        <div class="modal-btn danger" id="del-ev-ok">SUPPRIMER</div>
+        <div class="modal-btn" onclick="Modal.close()">ANNULER</div>
+      `);
+      document.getElementById('del-ev-ok').onclick = () => { Stores.cultures.deleteEvent(id, idx); Modal.close(); };
+    },
+    confirmDeleteEvent(id, idx) { Handlers.deleteEvent(id, idx); },
+    promptAddEvent() {
+      const opts = Stores.cultures.data.map(c=>`<option value="${c.id}">${c.id} - ${c.strain}</option>`).join('');
+      const todayISO = new Date().toISOString().split('T')[0];
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:15px">${LANGS[State.lang].addEvent}</div>
+        <select id="modal-culture-select" class="modal-input">${opts}</select>
+        <input type="date" id="modal-event-date" class="modal-input" value="${todayISO}" max="${todayISO}">
+        <input type="text" id="modal-event-type" class="modal-input" placeholder="${LANGS[State.lang].type}">
+        <div class="modal-label" style="margin-top:4px">Température réelle (°C) — optionnel</div>
+        <input type="text" id="modal-event-temp-global" class="modal-input small" placeholder="ex: 23.5" inputmode="decimal">
+        <div class="modal-btn black" id="global-event-ok">OK</div>
+        <div class="modal-btn" onclick="Modal.close()">${LANGS[State.lang].cancel}</div>
+      `);
+      document.getElementById('global-event-ok').onclick = () => {
+        const id   = document.getElementById('modal-culture-select').value;
+        const date = document.getElementById('modal-event-date').value;
+        const type = document.getElementById('modal-event-type').value.trim();
+        // Validation date — pas dans le futur
+        if(!id || !date || !type) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Champs requis</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Lot, date et note obligatoires.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        if(date > todayISO) {
+          Modal.show(`<div style="font-weight:900;margin-bottom:10px">Date invalide</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Un événement ne peut pas être dans le futur.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+          return;
+        }
+        // Température : virgule→point, validation [-10, 50]
+        let temp_c = null;
+        const rawTemp = document.getElementById('modal-event-temp-global').value.trim().replace(',', '.');
+        if(rawTemp !== '') {
+          const t = parseFloat(rawTemp);
+          if(isNaN(t) || t < 0 || t > 50) {
+            Modal.show(`<div style="font-weight:900;margin-bottom:10px">Température invalide</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">Plage acceptée : 0 à 50 °C.</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+            return;
+          }
+          temp_c = t;
+        }
+        const kind = detectKind(type);
+        Stores.cultures.addEvent(id, { date: new Date(date+'T12:00:00').getTime(), type, kind, temp_c });
+        Modal.close();
+      };
+    },
+    showCultureDetails(id) {
+      const c = Stores.cultures.data.find(c=>c.id===id);
+      if(!c) return;
+      const L = LANGS[State.lang];
+      let evHtml = '';
+      c.events.forEach((ev,idx)=>{
+        evHtml += `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--grey);"><span><strong>${ev.type}</strong> - ${new Date(ev.date).toLocaleDateString()}</span><div><button class="btn-small" onclick="APP.editEventPrompt('${id}',${idx})">éditer</button><button class="btn-delete" onclick="APP.deleteEvent('${id}',${idx})">×</button></div></div>`;
+      });
+      if(!evHtml) evHtml = '<p>Aucun événement</p>';
+      Modal.show(`
+        <div style="font-size:12px;font-weight:900;margin-bottom:5px">${c.id} - ${c.strain}</div>
+        <div style="max-height:200px;overflow-y:auto;margin-bottom:15px;">${evHtml}</div>
+        <div class="modal-btn black" onclick="APP.addEventToCulture('${id}'); Modal.close();">${L.addEvent}</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+      `);
+    },
+    setView(view) { State.setView(view); },
+    toggleDarkMode() { State.toggleDarkMode(); },
+    toggleLang() { State.toggleLang(); },
+    setAuthor(author) { State.setAuthor(author); },
+    pickDate() {
+      const current = State.getEffectiveDate();
+      const def = current.toISOString().split('T')[0];
+      Modal.datePicker(def, newDate => State.setCustomDate(newDate ? new Date(newDate+'T12:00:00').getTime() : null));
+    },
+    openSaveModal() {
+      const L = LANGS[State.lang];
+      const snapExists = !!localStorage.getItem('mycolab_snapshot');
+      Modal.show(`
+        <div class="modal-btn black" onclick="APP.downloadBackup()">${L.save}</div>
+        <div class="modal-btn" onclick="APP.uploadBackup()">${L.restore}</div>
+        <div class="modal-btn" onclick="window.print()">${L.pdf}</div>
+        <div class="modal-btn" onclick="APP.copyRawJSON()">Copier les données</div>
+        <div class="modal-btn" onclick="Modal.close()">${L.cancel}</div>
+        <div style="font-size:8px;color:var(--sub);margin-top:8px;line-height:1.5">
+          Format : <code style="font-family:monospace">{cultures:[],recipes:[],ingredients[]}</code><br>
+          Compatible Excel / Python / analyse externe.
+        </div>
+        <div style="font-size:9px;color:var(--sub);text-align:center;margin-top:6px;text-transform:uppercase">
+          Snapshot system : ${snapExists ? '● Actif' : '○ Inactif'}
+        </div>
+      `);
+    },
+    copyRawJSON() {
+      try {
+        const data = {
+          cultures:    JSON.parse(localStorage.getItem('mycolab_cultures_v1')    || '[]'),
+          recipes:     JSON.parse(localStorage.getItem('mycolab_recipes_v1')     || '[]'),
+          ingredients: JSON.parse(localStorage.getItem('mycolab_ingredients_v1') || '[]'),
+          refs:        JSON.parse(localStorage.getItem('mycolab_refs_v1')         || '{}'),
+          exportedAt:  new Date().toISOString(),
+          version:     APP_VERSION
+        };
+        navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => {
+          Toast.success(State.lang==='fr' ? 'Données copiées' : 'Data copied');
+        });
+      } catch(e) {
+        Modal.show(`<div style="font-weight:900;margin-bottom:10px">Erreur</div><div style="font-size:11px;color:var(--sub);margin-bottom:20px">${e.message}</div><div class="modal-btn" onclick="Modal.close()">OK</div>`);
+      }
+    },
+    /** Export PDF Eco-Smart d'une fiche de culture individuelle */
+    printCulture(id) {
+      const c = Stores.cultures.data.find(c => c.id === id);
+      if(!c) return;
+      const ir = Utils.calcIR(c);
+      const irLabel = ir !== null ? `IR: ${ir}%` : '';
+      const recipeLinks = Analytics.getRecipeLinks(c);
+      const unitMode = State.unitMode;
+      const isWeight = unitMode === 'kg';
+
+      // Ingrédients depuis le snapshot le plus récent lié à un événement
+      const evWithSnap = (c.events || []).filter(e => e?.recipeSnapshot);
+      let ingRows = '';
+      evWithSnap.forEach(ev => {
+        const snap = ev.recipeSnapshot;
+        const vol = snap.volume || 0;
+        const volDisplay = isWeight
+          ? (() => { const g = Math.round(vol * 1000); return g >= 1000 ? `${(g/1000).toFixed(2)} kg` : `${g} g`; })()
+          : `${vol.toFixed(2)} L`;
+        ingRows += `<tr><td colspan="3" style="padding:8px 0 2px">
+          <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px">${Utils.cleanSectionName(snap.sectionName)} — ${snap.groupName}</div>
+          <div style="font-size:13px;font-weight:900;margin:3px 0 4px;border-bottom:1px solid #000;padding-bottom:4px">OBJECTIF : <span style="font-size:16px">${volDisplay}</span></div>
+        </td></tr>`;
+        (snap.ingredients || []).forEach(ing => {
+          const vol = (ing.percent || 0) * (snap.volume || 1) / 100;
+          let valStr = '';
+          if(ing.unit === 'cs' || ing.unit === 'cc') {
+            const ml = ing.unit === 'cs' ? 15 : 5;
+            const units = vol * 1000 / ml;
+            const density = (ing.density && ing.density > 0) ? ing.density : 1.2;
+            valStr = `${Math.round(units * ml * density)}g`;
+          } else if(isWeight) {
+            const density = (ing.density && ing.density > 0) ? ing.density : 1.0;
+            const g = Math.round(vol * density * 1000);
+            valStr = g >= 1000 ? `${(g/1000).toFixed(2)}kg` : `${g}g`;
+          } else {
+            valStr = `${vol.toFixed(2)}L`;
+          }
+          ingRows += `<tr><td style="padding:2px 0">${ing.name}</td><td style="text-align:center;color:#777">${(ing.percent||0).toFixed(1)}%</td><td style="text-align:right;font-weight:700">${valStr}</td></tr>`;
+        });
+      });
+
+      // Événements
+      const evRows = (c.events || []).map(ev =>
+        `<tr><td style="padding:2px 0;color:#555">${Utils.toDDMMYYYY(ev.date)}</td><td colspan="2">${ev.type}${ev.temp_c != null ? ` (${ev.temp_c}°C)` : ''}</td></tr>`
+      ).join('');
+
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>MycoLab — ${c.id}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#111;padding:12mm 14mm;line-height:1.4}
+  h1{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #000;padding-bottom:4px;margin-bottom:8px}
+  .meta{display:flex;gap:16px;margin-bottom:10px;font-size:9px;color:#555;text-transform:uppercase}
+  .meta strong{color:#000}
+  table{width:100%;border-collapse:collapse;margin-bottom:10px}
+  th{font-size:8px;text-transform:uppercase;color:#777;border-bottom:1px solid #ccc;padding:2px 0;text-align:left}
+  th:nth-child(2){text-align:center}th:nth-child(3){text-align:right}
+  .section{margin-bottom:8px}
+  .section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:3px}
+  .notes{border-left:2px solid #ddd;padding:4px 8px;font-size:9px;color:#555;margin-top:8px;white-space:pre-wrap}
+  .footer{margin-top:12px;font-size:8px;color:#bbb;text-align:right}
+  @page{size:A4;margin:0}
+  @media print{body{padding:12mm 14mm}html{orphans:3;widows:3}}
+</style>
+</head><body>
+<h1>MycoLab</h1>
+<div class="meta">
+  <span><strong>${c.strain}</strong> (${c.generation})</span>
+  <span>Lot : <strong>${c.id}</strong></span>
+  <span>Début : <strong>${Utils.toDDMMYYYY(c.date_start)}</strong></span>
+  <span>Âge : <strong>${Analytics.getCultureAge(c, new Date())}j</strong></span>
+  ${irLabel ? `<span>IR : <strong style="color:#c00">${irLabel}</strong></span>` : ''}
+  <span>Unité : <strong>${isWeight ? 'Poids' : 'Volume'}</strong></span>
+</div>
+${ingRows ? `<div class="section"><div class="section-title">Recettes</div>
+<table><thead><tr><th>Ingrédient</th><th>%</th><th>${isWeight?'Poids':'Volume'}</th></tr></thead><tbody>${ingRows}</tbody></table></div>` : ''}
+${evRows ? `<div class="section"><div class="section-title">Journal</div>
+<table><thead><tr><th>Date</th><th colspan="2">Événement</th></tr></thead><tbody>${evRows}</tbody></table></div>` : ''}
+${c.notes ? `<div class="notes">${c.notes}</div>` : ''}
+<div class="footer">MycoLab v5.0.0 — ${new Date().toLocaleDateString('fr-CH')}</div>
+</body></html>`;
+
+      const w = window.open('', '_blank', 'width=800,height=600');
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+      setTimeout(() => { w.print(); }, 400);
+    },
+    downloadBackup() {
+      try {
+        const backup = {
+          version: APP_VERSION,
+          exportedAt: new Date().toISOString(),
+          recipes: Stores.recipes.data,
+          ingredients: Stores.ingredients.data,
+          cultures: Stores.cultures.data,
+          refs: Stores.refs.data
+        };
+        const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mycolab_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        Toast.success(State.lang==='fr' ? 'Sauvegarde téléchargée' : 'Backup downloaded');
+      } catch(e) {
+        console.error('[MycoLab] backup failed:', e);
+        Modal.show(`
+          <div style="font-weight:900;margin-bottom:10px">Erreur d'export</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:20px">${e.message}</div>
+          <div class="modal-btn" onclick="Modal.close()">FERMER</div>
+        `);
+        return;
+      }
+      Modal.close();
+    },
+    uploadBackup() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            // Validate: each key must be an array if present
+            const ok = ['recipes','ingredients','cultures'].every(k =>
+              !(k in data) || Array.isArray(data[k])
+            );
+            if(!ok) throw new Error('Structure de fichier invalide');
+            if(Array.isArray(data.recipes))     { Stores.recipes.data = data.recipes; Stores.recipes.save(); }
+            if(Array.isArray(data.ingredients)) { Stores.ingredients.data = data.ingredients; Stores.ingredients.save(); }
+            if(Array.isArray(data.cultures))    { Stores.cultures.data = data.cultures; Stores.cultures.save(); }
+            if(data.refs && data.refs.eventTypes) { Stores.refs.data = data.refs; Stores.refs.save(); }
+            Utils.migrateEvents();
+            State.notify();
+            Modal.close();
+          } catch(err) {
+            console.error('[MycoLab] restore failed:', err);
+            Modal.show(`
+              <div style="font-weight:900;margin-bottom:10px">Restauration impossible</div>
+              <div style="font-size:11px;color:var(--sub);margin-bottom:20px">${err.message}</div>
+              <div class="modal-btn" onclick="Modal.close()">FERMER</div>
+            `);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    },
+    /**
+     * openDrawer(sectionIdx) — ouvre le tiroir d'ingrédients scopé sur une section.
+     * Verrouille State.activeCat au moment de l'ouverture pour éviter les conflits
+     * si l'utilisateur scrolle entre les sections avant de choisir un ingrédient.
+     */
+    openDrawer(sectionIdx) {
+      if(sectionIdx == null || sectionIdx < 0 || sectionIdx >= Stores.recipes.data.length) return;
+      State.activeCat = sectionIdx;
+      const section = Stores.recipes.data[sectionIdx];
+      const label = document.getElementById('cat-label');
+      if(label) label.textContent = section.t.toUpperCase();
+      document.getElementById('drawer').classList.add('open');
+    },
+    toggleDrawer(show) { document.getElementById('drawer').classList.toggle('open', show); },
+    prompt(title, defaultValue, callback) { Modal.prompt(title, defaultValue, callback); },
+    saveRecipes() { Stores.recipes.save(); }
+  };
+
+  // ============================================================
+  // SECTION 8 — PUBLIC API & INITIALISATION
+  // window.APP exposes Handlers to inline onclick attributes.
+  // init() is the single entry point: loads persisted state,
+  // wires the observer, then triggers first render.
+  // ============================================================
+
+  // Exposer l'objet APP global (inchangé)
+  window.APP = {
+    setV: Handlers.setV,
+    addV: Handlers.addV,
+    setT: Handlers.setT,
+    addT: Handlers.addT,
+    delT: Handlers.delT,
+    editN: Handlers.editN,
+    delI: Handlers.delI,
+    pickIngredient: Handlers.pickIngredient,
+    togglePct: Handlers.togglePct,
+    setUnit: Handlers.setUnit,
+    setTemp: Handlers.setTemp,
+    openRatio: Handlers.openRatio,
+    setR: Handlers.setR,
+    addIng: Handlers.addIng,
+    startP: Handlers.startP,
+    endP: Handlers.endP,
+    openTabMenu: Handlers.openTabMenu,
+    confirmDel: Handlers.confirmDel,
+    delV: Handlers.delV,
+    addIngredientPrompt: Handlers.addIngredientPrompt,
+    editIngredient: Handlers.editIngredient,
+    deleteIngredient: Handlers.deleteIngredient,
+    addCulturePrompt: Handlers.addCulturePrompt,
+    editCulture: Handlers.editCulture,
+    deleteCulture: Handlers.deleteCulture,
+    addQuickEvent: Handlers.addQuickEvent,
+    addEventToCulture: Handlers.addEventToCulture,
+    printCulture: Handlers.printCulture,
+    addRefEventType: Handlers.addRefEventType,
+    editEventPrompt: Handlers.editEventPrompt,
+    deleteEvent: Handlers.deleteEvent,
+    confirmDeleteEvent: Handlers.confirmDeleteEvent,
+    promptAddEvent: Handlers.promptAddEvent,
+    showCultureDetails: Handlers.showCultureDetails,
+    showDayLog: Handlers.showDayLog,
+    setView: Handlers.setView,
+    toggleDarkMode: Handlers.toggleDarkMode,
+    toggleLang: Handlers.toggleLang,
+    setAuthor: Handlers.setAuthor,
+    pickDate: Handlers.pickDate,
+    openSaveModal: Handlers.openSaveModal,
+    copyRawJSON: Handlers.copyRawJSON,
+    downloadBackup: Handlers.downloadBackup,
+    uploadBackup: Handlers.uploadBackup,
+    toggleDrawer: Handlers.toggleDrawer,
+    openDrawer: Handlers.openDrawer,
+    prompt: Handlers.prompt,
+    saveRecipes: Handlers.saveRecipes,
+    render: () => { Renderer.render(); },
+    recipes: Stores.recipes.data,
+    state: {
+      gIdx: State.gIdx,
+      activeCat: State.activeCat,
+      author: State.author
+    }
+  };
+
+  // ---------- 8. INITIALISATION ----------
+  function init() {
+    try {
+      State.load();
+      Stores.recipes.load();
+      Stores.ingredients.load();
+      Stores.cultures.load();
+      Stores.refs.load();
+      Utils.migrateRecipeIngIds();
+      Utils.migrateEvents();
+      State.subscribe(() => Renderer.render());
+      Renderer.render();
+    } catch(e) {
+      console.error('[MycoLab] init failed:', e);
+      // Récupère les données brutes pour export de secours
+      const rawCultures  = localStorage.getItem('mycolab_cultures_v1') || localStorage.getItem('mycolab_snapshot') || '[]';
+      const rawRecipes   = localStorage.getItem('mycolab_recipes_v1')  || '[]';
+      const rawIngr      = localStorage.getItem('mycolab_ingredients_v1') || '[]';
+      const emergencyJSON = JSON.stringify({ cultures: rawCultures, recipes: rawRecipes, ingredients: rawIngr }, null, 2);
+      window._emergencyData = emergencyJSON;
+
+      document.getElementById('content').innerHTML = `
+        <div style="padding:30px;text-align:center">
+          <div style="font-size:14px;font-weight:900;color:var(--danger);margin-bottom:8px">Erreur de démarrage</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:24px">Tes données sont intactes. Télécharge-les avant de réinitialiser.</div>
+          <button class="btn-add" style="margin-bottom:10px" onclick="
+            const a=document.createElement('a');
+            a.href='data:application/json,'+encodeURIComponent(window._emergencyData);
+            a.download='mycolab_rescue_'+new Date().toISOString().slice(0,10)+'.json';
+            a.click()
+          ">⬇ Télécharger mes données</button>
+          <button class="btn-add" style="margin-bottom:10px" onclick="
+            const snap=localStorage.getItem('mycolab_snapshot');
+            if(snap){localStorage.setItem('mycolab_cultures_v1',snap);location.reload();}
+            else{document.getElementById('snap-msg').style.display='block';}
+          ">↩ Restaurer depuis snapshot</button>
+          <div id="snap-msg" style="display:none;font-size:10px;color:var(--danger);margin-bottom:10px">Aucun snapshot disponible.</div>
+          <button class="btn-add" style="color:var(--danger);border-color:var(--danger)" onclick="if(confirm('Effacer toutes les données ?')){localStorage.clear();location.reload()}">Réinitialiser</button>
+        </div>`;
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
