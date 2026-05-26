@@ -4,6 +4,10 @@ Application web de suivi de cultures mycologiques — fichier HTML unique, zéro
 
 [📦 Dépôt GitHub: MycoLab](https://github.com/smims909/MycoLab)
 
+## 🚀 Démarrer
+
+**[Ouvrir MycoLab](https://smims909.github.io/MycoLab/mycolab.html)** — Aucune installation requise, lancez l'application directement dans votre navigateur.
+
 ## Fonctionnalités
 
 - **Recettes** — formulation de substrats par volumes/poids, gestion des ingrédients
