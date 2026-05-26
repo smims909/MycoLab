@@ -2,6 +2,8 @@
 
 Application web de suivi de cultures mycologiques — fichier HTML unique, zéro dépendance.
 
+[📦 Dépôt GitHub: MycoLab](https://github.com/smims909/MycoLab)
+
 ## Fonctionnalités
 
 - **Recettes** — formulation de substrats par volumes/poids, gestion des ingrédients
