@@ -4,7 +4,7 @@ Application web de suivi de cultures mycologiques — fichier HTML unique, zéro
 
 ## 🚀 Démarrer
 
-**[Ouvrir MycoLab](https://smims909.github.io/MycoLab/mycolab.html)** — Aucune installation requise, lancez l'application directement dans votre navigateur.
+**[Ouvrir MycoLab](https://smims909.github.io/MycoLab/)** — Aucune installation requise, lancez l'application directement dans votre navigateur.
 
 ## Fonctionnalités
 
